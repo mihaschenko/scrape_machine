@@ -1,0 +1,21 @@
+# Default ignored files
+.idea
+bin
+driver
+log
+out
+reports
+target
+UniversalScraper.iml
+*.txt
+*.csv
+*.csv.*
+*.zip
+**/*Scraper.java
+!**/Scraper.java
+*.json
+*.html
+*TillConnection.java
+*TillConnectionTimer.java
+*proxy.properties
+*application.properties
