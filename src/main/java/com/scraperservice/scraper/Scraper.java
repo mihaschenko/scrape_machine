@@ -1,6 +1,6 @@
 package com.scraperservice.scraper;
 
-import com.scraperservice.connection.ConnectionSetting;
+import com.scraperservice.connection.setting.ConnectionSetting;
 import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
 import org.jsoup.nodes.Document;

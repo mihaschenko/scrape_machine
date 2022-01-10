@@ -37,6 +37,22 @@ public class ScrapeUtils {
         return new ArrayList<>(elements.eachText());
     }
 
+    public static String getOwnText(Element document, String selector) {
+        Elements elements = document.select(selector);
+        if(elements.size() > 0)
+            return elements.get(0).ownText().trim();
+        else
+            return "";
+    }
+
+    public static List<String> getOwnTexts(Element document, String selector) {
+        Elements elements = document.select(selector);
+        List<String> result = new ArrayList<>();
+        for(Element element : elements)
+            result.add(element.ownText().trim());
+        return result;
+    }
+
     public static void removeElement(Document document, String cssSelector) {
         if(cssSelector == null)
             return;

@@ -3,11 +3,12 @@ package com.scraperservice.application.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "run")
 @Data
-public class Run {
+public class Run implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

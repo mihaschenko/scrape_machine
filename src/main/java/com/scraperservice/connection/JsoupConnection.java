@@ -1,5 +1,6 @@
 package com.scraperservice.connection;
 
+import com.scraperservice.connection.setting.ConnectionSetting;
 import com.scraperservice.helper.SSLHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

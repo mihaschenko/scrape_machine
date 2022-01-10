@@ -1,13 +1,13 @@
 package com.scraperservice.connection;
 
 import com.scraperservice.ChromeDriverFactory;
+import com.scraperservice.connection.setting.ConnectionSetting;
 import com.scraperservice.helper.LogHelper;
 import com.scraperservice.utils.WebDriverUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.Map;
@@ -54,6 +54,10 @@ public class SeleniumConnection extends Connection {
         catch (Exception e) {
             LogHelper.getLogger().log(Level.WARNING, "selenium wait exception");
         }
+
+        if(setting.getEvents().size() > 0)
+            setting.getEvents().forEach(connectionEvent -> connectionEvent.event(driver));
+
         return Jsoup.parse(driver.getPageSource());
     }
 

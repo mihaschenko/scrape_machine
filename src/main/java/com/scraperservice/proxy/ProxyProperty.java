@@ -1,6 +1,16 @@
-package com.scraperservice.connection.proxy;
+package com.scraperservice.proxy;
 
 public class ProxyProperty {
+    public static void setAllProxyProperty(String host, String port) {
+        setProxyProperty(host, port);
+        setPropertyAuthDisabledSchemesToEmpty();
+    }
+
+    public static void setPort(String port) {
+        System.setProperty("http.proxyPort", port);
+        System.setProperty("https.proxyPort", port);
+    }
+
     public static void setHttpProxyProperty(String host, String port) {
         System.setProperty("http.proxyHost", host);
         System.setProperty("http.proxyPort", port);

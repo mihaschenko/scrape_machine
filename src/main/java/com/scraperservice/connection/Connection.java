@@ -1,5 +1,6 @@
 package com.scraperservice.connection;
 
+import com.scraperservice.connection.setting.ConnectionSetting;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;

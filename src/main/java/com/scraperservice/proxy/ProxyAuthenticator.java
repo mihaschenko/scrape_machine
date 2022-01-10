@@ -1,4 +1,4 @@
-package com.scraperservice.connection.proxy;
+package com.scraperservice.proxy;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;

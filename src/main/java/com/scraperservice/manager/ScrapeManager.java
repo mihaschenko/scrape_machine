@@ -23,18 +23,24 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class ScrapeManager implements Runnable {
-    private static final ScrapeManager scraperManager;
+    private static ScrapeManager scraperManager;
 
-    public static ScrapeManager getInstance() { return scraperManager; }
-
-    static {
-        try {
-            ScraperSetting scraperSetting = new ScraperSetting();
-            scraperSetting.choice();
-            scraperManager = new ScrapeManager(scraperSetting);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+    public synchronized static ScrapeManager getInstance() {
+        if(scraperManager == null) {
+            try{
+                ScraperSetting scraperSetting = new ScraperSetting();
+                scraperSetting.choice();
+                scraperManager = new ScrapeManager(scraperSetting);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
+        return scraperManager;
+    }
+
+    public synchronized static void init(ScraperSetting scraperSetting) {
+
     }
 
     private ScrapeManager(ScraperSetting scraperSetting) throws Exception {
@@ -53,6 +59,8 @@ public class ScrapeManager implements Runnable {
         taskPool = Executors.newFixedThreadPool(Integer.parseInt(properties.getProperty("scrape.manager.task.pool")));
         completableFutureManager = new CompletableFutureManager<>();
         statisticFrameManager = StatisticFrameManager.getInstance();
+
+        proxyManager = scraperSetting.isUseProxy() ? ProxyManager.getInstance() : null;
     }
 
     private final DataSaveManager dataSaveManager;
@@ -62,6 +70,7 @@ public class ScrapeManager implements Runnable {
     private final ExecutorService taskPool;
     private final CompletableFutureManager<Void> completableFutureManager;
     private final StatisticFrameManager statisticFrameManager;
+    private final ProxyManager proxyManager;
 
     public ConnectionPool getConnectionPool() {return connectionPool;}
 
@@ -70,6 +79,8 @@ public class ScrapeManager implements Runnable {
         Thread completableFutureManagerThread = new Thread(completableFutureManager);
         completableFutureManagerThread.setDaemon(true);
         completableFutureManagerThread.start();
+        if(proxyManager != null)
+            proxyManager.setProxyProperties();
 
         if(linksQueue.size() == 0) {
             try {

@@ -21,15 +21,21 @@ public class ScraperSetting {
     protected Scraper scraper;
     protected Class<? extends Connection> connectionClass;
     protected List<String> startLinks;
+    protected boolean isUseProxy;
 
     public Scraper getScraper() {return scraper;}
     public Class<? extends Connection> getConnectionClass() {return connectionClass;}
     public List<String> getStartLinks() {return startLinks;}
+    public boolean isUseProxy() {return isUseProxy;}
+
+    public void setScraper(Scraper scraper) {this.scraper = scraper;}
+    public void setConnectionClass(Class<? extends Connection> connectionClass) {this.connectionClass = connectionClass;}
 
     public void choice() throws Exception {
         setScraper();
         setConnection();
         setStartLinks();
+        setUseProxy();
     }
 
     private void setScraper()
@@ -101,5 +107,23 @@ public class ScraperSetting {
             startLinks = Arrays.stream(result.trim().split(",")).toList();
         else
             startLinks = Collections.emptyList();
+    }
+
+    private void setUseProxy() throws IOException {
+        String result;
+        System.out.println("IV. CHOOSE WHETHER TO USE A PROXY OR NOT (Y/N)");
+        while (true) {
+            result = ConsoleHelper.readLine().trim();
+            if(result.equals("Y")) {
+                isUseProxy = true;
+                break;
+            }
+            else if(result.equals("N")) {
+                isUseProxy = false;
+                break;
+            }
+            else
+                System.out.println("Incorrect answer. Try again!");
+        }
     }
 }

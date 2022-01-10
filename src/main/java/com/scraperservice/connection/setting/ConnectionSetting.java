@@ -1,4 +1,4 @@
-package com.scraperservice.connection;
+package com.scraperservice.connection.setting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +16,7 @@ public class ConnectionSetting {
     private boolean useDefaultPreparation;
     private boolean getJson;
     private List<String> waitForIt;
+    private List<ConnectionEvent> events;
 
     public ConnectionSetting() {
         method = Method.GET;
@@ -24,6 +25,7 @@ public class ConnectionSetting {
         cookie = new HashMap<>();
         data = new HashMap<>();
         waitForIt = new ArrayList<>();
+        events = new ArrayList<>();
     }
 
     public Map<String, String> getCookie() {return cookie;}
@@ -42,6 +44,8 @@ public class ConnectionSetting {
         this.waitForIt.add(waitForIt);
     }
     public void setWaitForItList(List<String> waitForIt) {this.waitForIt = waitForIt;}
+    public List<ConnectionEvent> getEvents() {return events;}
+    public void setEvents(List<ConnectionEvent> events) {this.events = events;}
 
     public enum Method {
         GET,

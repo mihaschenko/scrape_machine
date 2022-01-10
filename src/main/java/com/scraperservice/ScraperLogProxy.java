@@ -1,6 +1,6 @@
 package com.scraperservice;
 
-import com.scraperservice.connection.ConnectionSetting;
+import com.scraperservice.connection.setting.ConnectionSetting;
 import com.scraperservice.helper.LogHelper;
 import com.scraperservice.manager.StatisticManager;
 import com.scraperservice.scraper.Scraper;
