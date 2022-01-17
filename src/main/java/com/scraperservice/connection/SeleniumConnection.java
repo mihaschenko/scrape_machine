@@ -1,8 +1,8 @@
 package com.scraperservice.connection;
 
 import com.scraperservice.ChromeDriverFactory;
-import com.scraperservice.connection.setting.ConnectionSetting;
-import com.scraperservice.helper.LogHelper;
+import com.scraperservice.connection.setting.ConnectionProperties;
+import com.scraperservice.scraper.helper.LogHelper;
 import com.scraperservice.utils.WebDriverUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,7 +24,7 @@ public class SeleniumConnection extends Connection {
     public ChromeDriver getDriver() { return driver; }
 
     @Override
-    public synchronized Document getPage(String url, ConnectionSetting setting) {
+    public synchronized Document getPage(String url, ConnectionProperties setting) {
         if(driver == null)
             driver = driverFactory.getChromeDriver();
         if(setting == null)
@@ -41,18 +41,18 @@ public class SeleniumConnection extends Connection {
         driver.navigate().to(url);
 
         try{
-            WebDriverUtils.waitPageStateComplete(driver, 120);
-            WebDriverUtils.waitJQuery(driver, 120);
+            WebDriverUtils.waitPageStateComplete(driver, 10);
             if(setting.getWaitForIt() != null && setting.getWaitForIt().size() > 0) {
                 for(String waitForIt : setting.getWaitForIt())
-                    WebDriverUtils.waitElement(driver, waitForIt, 20);
+                    WebDriverUtils.waitElement(driver, waitForIt, 10);
             }
+            WebDriverUtils.waitJQuery(driver, 5);
         }
         catch (JavascriptException e) {
             LogHelper.getLogger().log(Level.SEVERE, "exception while SeleniumConnection", e);
         }
         catch (Exception e) {
-            LogHelper.getLogger().log(Level.WARNING, "selenium wait exception");
+            LogHelper.getLogger().log(Level.WARNING, "selenium wait exception", e);
         }
 
         if(setting.getEvents().size() > 0)

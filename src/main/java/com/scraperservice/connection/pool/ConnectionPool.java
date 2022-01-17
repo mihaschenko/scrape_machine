@@ -2,10 +2,9 @@ package com.scraperservice.connection.pool;
 
 import com.scraperservice.connection.Connection;
 import com.scraperservice.connection.ConnectionBuilder;
-import com.scraperservice.helper.LogHelper;
+import com.scraperservice.scraper.helper.LogHelper;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;

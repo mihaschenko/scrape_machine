@@ -1,7 +1,7 @@
 package com.scraperservice;
 
-import com.scraperservice.connection.setting.ConnectionSetting;
-import com.scraperservice.helper.LogHelper;
+import com.scraperservice.connection.setting.ConnectionProperties;
+import com.scraperservice.scraper.helper.LogHelper;
 import com.scraperservice.manager.StatisticManager;
 import com.scraperservice.scraper.Scraper;
 import com.scraperservice.scraper.page.PageType;
@@ -86,7 +86,7 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public ConnectionSetting getDefaultConnectionSetting() {
+    public ConnectionProperties getDefaultConnectionSetting() {
         return scraper.getDefaultConnectionSetting();
     }
 }

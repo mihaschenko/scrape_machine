@@ -6,6 +6,8 @@ import com.scraperservice.storage.DataCell;
 import com.scraperservice.utils.RegexUtils;
 import com.scraperservice.utils.ScrapeUtils;
 import com.scraperservice.utils.TableUtils;
+import com.web.application.entity.Config;
+import com.web.application.entity.Run;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;
@@ -29,29 +31,28 @@ public class ScraperService extends Scraper {
     private final String productSelector;
     private final String nextPageSelector;
     private final String nextPageGET;
-    private final String isProductSelector;
+    private String isProductSelector;
     private final List<ProductDataInfo> productDataInfoList = new ArrayList<>();
 
-    public ScraperService(String jsonString) {
-        if(jsonString == null)
-            throw new NullPointerException("String jsonString = null");
-        JSONObject json = new JSONObject(jsonString);
-        scrapeProductDataInfo(json);
+    public ScraperService(Run run) {
+        if(run == null)
+            throw new NullPointerException("Run run = null");
+        Config config = run.getConfig();
 
-        baseSiteUrl = json.getString("baseUrl").trim();
-        startPages.addAll(json.getJSONArray("categoryStartPages").toList().stream()
-                .map(object -> ((String) object).trim()).toList());
-        categorySelector = json.optString("category").trim();
-        subcategorySelector = json.optString("subcategory_at_category_page").trim();
-        productSelector = json.optString("product_at_category_page").trim();
-        nextPageSelector = json.optString("nextPageCss").trim();
-        nextPageGET = json.optString("nextPageGET").trim();
-        isProductSelector = json.optString("product_at_product_page").trim();
+        baseSiteUrl = config.getBaseUrl();
+        //startPages.addAll();
+        categorySelector = config.getCategorySelector();
+        subcategorySelector = config.getSubcategorySelector();
+        productSelector = config.getProductSelector();
+        nextPageSelector = config.getNextPageSelector();
+        nextPageGET = config.getNextPageGet();
+        //isProductSelector =
+        scrapeProductDataInfo(new JSONArray(config.getProductDataSelectors()));
     }
 
-    private void scrapeProductDataInfo(JSONObject json) {
+    private void scrapeProductDataInfo(JSONArray json) {
         for(int i = 1;;i++) {
-            JSONObject productDataUnit = json.optJSONObject(Integer.toString(i));
+            JSONObject productDataUnit = json.optJSONObject(i);
             if(productDataUnit != null) {
                 ProductDataInfo productDataInfo = new ProductDataInfo();
                 productDataInfo.name = productDataUnit.optString("name").trim();
@@ -216,6 +217,21 @@ public class ScraperService extends Scraper {
             }
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ScraperService{" +
+                "baseSiteUrl='" + baseSiteUrl + '\'' +
+                ", startPages=" + startPages +
+                ", categorySelector='" + categorySelector + '\'' +
+                ", subcategorySelector='" + subcategorySelector + '\'' +
+                ", productSelector='" + productSelector + '\'' +
+                ", nextPageSelector='" + nextPageSelector + '\'' +
+                ", nextPageGET='" + nextPageGET + '\'' +
+                ", isProductSelector='" + isProductSelector + '\'' +
+                ", productDataInfoList=" + productDataInfoList +
+                '}';
     }
 
     private static class ProductDataInfo {

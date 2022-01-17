@@ -1,6 +1,6 @@
-package com.scraperservice.application.repository;
+package com.web.application.repository;
 
-import com.scraperservice.application.entity.Run;
+import com.web.application.entity.Run;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

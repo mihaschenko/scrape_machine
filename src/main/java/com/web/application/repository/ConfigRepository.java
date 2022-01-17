@@ -1,6 +1,6 @@
-package com.scraperservice.application.repository;
+package com.web.application.repository;
 
-import com.scraperservice.application.entity.Config;
+import com.web.application.entity.Config;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

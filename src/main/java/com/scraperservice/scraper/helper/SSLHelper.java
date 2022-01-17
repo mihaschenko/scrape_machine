@@ -1,4 +1,4 @@
-package com.scraperservice.helper;
+package com.scraperservice.scraper.helper;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;

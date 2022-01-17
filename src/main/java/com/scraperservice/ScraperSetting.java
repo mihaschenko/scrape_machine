@@ -1,8 +1,10 @@
 package com.scraperservice;
 
 import com.scraperservice.connection.Connection;
-import com.scraperservice.helper.ConsoleHelper;
+import com.scraperservice.connection.JsoupConnection;
+import com.scraperservice.scraper.helper.ConsoleHelper;
 import com.scraperservice.scraper.Scraper;
+import lombok.Data;
 import org.reflections.Reflections;
 
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@Data
 public class ScraperSetting {
     private static final String CONNECTION_CLASSES_PACKAGE = "com.scraperservice.connection";
     private static final String SCRAPER_CLASSES_PACKAGE = "com.scraperservice.scraper";
@@ -23,13 +26,22 @@ public class ScraperSetting {
     protected List<String> startLinks;
     protected boolean isUseProxy;
 
-    public Scraper getScraper() {return scraper;}
-    public Class<? extends Connection> getConnectionClass() {return connectionClass;}
-    public List<String> getStartLinks() {return startLinks;}
-    public boolean isUseProxy() {return isUseProxy;}
-
-    public void setScraper(Scraper scraper) {this.scraper = scraper;}
-    public void setConnectionClass(Class<? extends Connection> connectionClass) {this.connectionClass = connectionClass;}
+    public ScraperSetting() {}
+    public ScraperSetting(Scraper scraper) {
+        this(scraper, JsoupConnection.class, Collections.emptyList(), false);
+    }
+    public ScraperSetting(Scraper scraper, Class<? extends Connection> connectionClass) {
+        this(scraper, connectionClass, Collections.emptyList(), false);
+    }
+    public ScraperSetting(Scraper scraper, Class<? extends Connection> connectionClass, List<String> startLinks) {
+        this(scraper, connectionClass, startLinks, false);
+    }
+    public ScraperSetting(Scraper scraper, Class<? extends Connection> connectionClass, List<String> startLinks, boolean isUseProxy) {
+        this.scraper = scraper;
+        this.connectionClass = connectionClass;
+        this.startLinks = startLinks;
+        this.isUseProxy = isUseProxy;
+    }
 
     public void choice() throws Exception {
         setScraper();

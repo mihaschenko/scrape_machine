@@ -1,6 +1,6 @@
 package com.scraperservice.scraper;
 
-import com.scraperservice.connection.setting.ConnectionSetting;
+import com.scraperservice.connection.setting.ConnectionProperties;
 import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
 import org.jsoup.nodes.Document;
@@ -16,5 +16,5 @@ public abstract class Scraper {
     public abstract List<String> scrapeLinksToProductPages(Document document) throws Exception;
     public abstract String goToNextPage(Document document) throws Exception;
     public abstract String goToNextPage(String url) throws Exception;
-    public ConnectionSetting getDefaultConnectionSetting() { return ConnectionSetting.getDefaultConnectionSetting(); }
+    public ConnectionProperties getDefaultConnectionSetting() { return ConnectionProperties.getDEFAULT_CONNECTION_PROPERTIES(); }
 }

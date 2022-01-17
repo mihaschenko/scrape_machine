@@ -1,86 +1,53 @@
 package com.scraperservice.manager;
 
-import com.scraperservice.ScraperSetting;
 import com.scraperservice.connection.Connection;
 import com.scraperservice.connection.pool.ConnectionPool;
 import com.scraperservice.exception.DoNotHaveAnyProductLinksException;
-import com.scraperservice.helper.LogHelper;
-import com.scraperservice.ScraperLogProxy;
+import com.scraperservice.scraper.helper.LogHelper;
 import com.scraperservice.scraper.page.PageData;
 import com.scraperservice.queue.ConcurrentLinkedQueueUnique;
 import com.scraperservice.scraper.Scraper;
 import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
-import com.scraperservice.storage.writer.CSVDataWriter;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import java.io.FileReader;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+@Data
 public class ScrapeManager implements Runnable {
-    private static ScrapeManager scraperManager;
-
-    public synchronized static ScrapeManager getInstance() {
-        if(scraperManager == null) {
-            try{
-                ScraperSetting scraperSetting = new ScraperSetting();
-                scraperSetting.choice();
-                scraperManager = new ScrapeManager(scraperSetting);
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return scraperManager;
-    }
-
-    public synchronized static void init(ScraperSetting scraperSetting) {
-
-    }
-
-    private ScrapeManager(ScraperSetting scraperSetting) throws Exception {
-        Properties properties = new Properties();
-        properties.load(new FileReader("src/main/resources/programSetting.properties"));
-
-        dataSaveManager = new DataSaveManager();
-        dataSaveManager.addDataWriter(new CSVDataWriter(scraperSetting.getScraper().getClass().getSimpleName()));
-
-        linksQueue = new ConcurrentLinkedQueueUnique();
-        linksQueue.addAll(scraperSetting.getStartLinks());
-
-        scraper = new ScraperLogProxy(scraperSetting.getScraper());
-        connectionPool = new ConnectionPool(Integer.parseInt(properties.getProperty("scrape.manager.connection.pool")),
-                scraperSetting.getConnectionClass(), new Object[0]);
-        taskPool = Executors.newFixedThreadPool(Integer.parseInt(properties.getProperty("scrape.manager.task.pool")));
-        completableFutureManager = new CompletableFutureManager<>();
-        statisticFrameManager = StatisticFrameManager.getInstance();
-
-        proxyManager = scraperSetting.isUseProxy() ? ProxyManager.getInstance() : null;
-    }
-
+    @Autowired
     private final DataSaveManager dataSaveManager;
+    @Autowired
     private final Scraper scraper;
+    @Autowired
     private final ConcurrentLinkedQueueUnique linksQueue;
+    @Autowired
     private final ConnectionPool connectionPool;
+    @Autowired
     private final ExecutorService taskPool;
+    @Autowired
     private final CompletableFutureManager<Void> completableFutureManager;
+    @Autowired
     private final StatisticFrameManager statisticFrameManager;
-    private final ProxyManager proxyManager;
-
-    public ConnectionPool getConnectionPool() {return connectionPool;}
+    //private final ProxyManager proxyManager;
 
     @Override
     public void run() {
         Thread completableFutureManagerThread = new Thread(completableFutureManager);
         completableFutureManagerThread.setDaemon(true);
         completableFutureManagerThread.start();
-        if(proxyManager != null)
-            proxyManager.setProxyProperties();
+        //if(proxyManager != null)
+        //    proxyManager.setProxyProperties();
 
         if(linksQueue.size() == 0) {
             try {
@@ -113,7 +80,7 @@ public class ScrapeManager implements Runnable {
                         return pageData;
                     }
                     catch (Exception e) {
-                        LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                        LogHelper.getLogger().log(Level.SEVERE, link + " : " + e.getMessage(), e);
                         throw new IllegalStateException(e);
                     }
                 }, taskPool);

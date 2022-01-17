@@ -1,7 +1,7 @@
-package com.scraperservice.application.service;
+package com.web.application.service;
 
-import com.scraperservice.application.entity.Config;
-import com.scraperservice.application.repository.ConfigRepository;
+import com.web.application.entity.Config;
+import com.web.application.repository.ConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

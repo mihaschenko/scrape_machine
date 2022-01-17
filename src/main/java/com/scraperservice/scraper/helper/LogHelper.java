@@ -1,4 +1,9 @@
-package com.scraperservice.helper;
+package com.scraperservice.scraper.helper;
+
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -6,6 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class LogHelper {
     private static final Logger logger;
 

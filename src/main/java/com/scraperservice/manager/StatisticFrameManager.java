@@ -2,21 +2,20 @@ package com.scraperservice.manager;
 
 import com.scraperservice.view.StatisticFrame;
 import com.scraperservice.view.StatisticTextArea;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.io.Closeable;
 
+@Component
+@Scope("singleton")
 public class StatisticFrameManager implements Closeable {
-    private static final StatisticFrameManager statisticFrameManager = new StatisticFrameManager();
     private final Timer timer;
     private final JFrame jFrame;
 
-    public static StatisticFrameManager getInstance() {
-        return statisticFrameManager;
-    }
-
-    private StatisticFrameManager() {
+    public StatisticFrameManager() {
         StatisticFrame statisticFrame = new StatisticFrame();
         jFrame = statisticFrame;
         StatisticTextArea statisticTextArea = new StatisticTextArea();

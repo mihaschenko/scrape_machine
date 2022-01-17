@@ -1,6 +1,6 @@
 package com.scraperservice.queue;
 
-import com.scraperservice.helper.LogHelper;
+import com.scraperservice.scraper.helper.LogHelper;
 import com.scraperservice.utils.RandomStringHelper;
 
 import java.sql.*;

@@ -1,7 +1,7 @@
-package com.scraperservice.application.service;
+package com.web.application.service;
 
-import com.scraperservice.application.entity.Run;
-import com.scraperservice.application.repository.RunRepository;
+import com.web.application.entity.Run;
+import com.web.application.repository.RunRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

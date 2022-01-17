@@ -1,7 +1,7 @@
 package com.scraperservice.connection;
 
-import com.scraperservice.connection.setting.ConnectionSetting;
-import com.scraperservice.helper.SSLHelper;
+import com.scraperservice.connection.setting.ConnectionProperties;
+import com.scraperservice.scraper.helper.SSLHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class JsoupConnection extends Connection {
     @Override
-    public Document getPage(String url, ConnectionSetting setting) throws IOException {
+    public Document getPage(String url, ConnectionProperties setting) throws IOException {
         if(setting == null)
             throw new NullPointerException("ConnectionSetting setting = null");
         org.jsoup.Connection connection = SSLHelper.getConnection(url);
@@ -30,7 +30,13 @@ public class JsoupConnection extends Connection {
             connection.method(org.jsoup.Connection.Method.POST);
             return Jsoup.parse(connection.execute().body());
         }
-        return setting.getMethod() == ConnectionSetting.Method.GET ? connection.get() : connection.post();
+
+        if(setting.isUseProxy() && setting.getProxyProperty() != null)
+            connection.proxy(setting.getProxyProperty().getHost(), setting.getProxyProperty().getPort());
+
+        connection.timeout(0);
+
+        return setting.getMethod() == ConnectionProperties.Method.GET ? connection.get() : connection.post();
     }
 
     @Override

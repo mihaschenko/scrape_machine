@@ -1,4 +1,4 @@
-import com.scraperservice.helper.LogHelper;
+import com.scraperservice.scraper.helper.LogHelper;
 import org.junit.Test;
 
 import java.util.logging.Handler;

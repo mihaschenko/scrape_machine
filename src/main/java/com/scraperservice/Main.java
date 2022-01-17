@@ -1,18 +1,18 @@
 package com.scraperservice;
 
+import com.scraperservice.context.ManualScraperContext;
 import com.scraperservice.manager.ScrapeManager;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
 
 public class Main {
+    public static ScrapeManager scrapeManager;
+
     public static void main(String[] args) throws IOException {
-        if(args.length == 15) {
-            Thread managerThread = new Thread(ScrapeManager.getInstance());
-            managerThread.start();
-        }
-        Files.writeString(Paths.get("test.txt"), Arrays.toString(args));
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ManualScraperContext.class);
+        scrapeManager = context.getBean(ScrapeManager.class);
+        Thread managerThread = new Thread(scrapeManager);
+        managerThread.start();
     }
 }

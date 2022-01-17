@@ -1,4 +1,4 @@
-package com.scraperservice.application.entity;
+package com.web.application.entity;
 
 import lombok.Data;
 
@@ -12,7 +12,8 @@ public class Run implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    private Integer user_id;
+    @Column(name = "user_id")
+    private Integer userId;
     private String hash;
     private String state;
     @OneToOne

@@ -1,8 +1,9 @@
-package com.scraperservice.application.controller;
+package com.web.application.controller;
 
-import com.scraperservice.TestMain;
-import com.scraperservice.application.entity.Run;
-import com.scraperservice.application.service.RunService;
+import com.scraperservice.ServerApplicationMain;
+import com.web.application.entity.Run;
+import com.web.application.service.RunService;
+import com.scraperservice.utils.RandomStringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,14 +26,14 @@ public class RunController {
         Run run = runService.getRunByHash(hash);
 
         if(run != null) {
-            final String fileName = "testRunObjectData.txt";
+            final String fileName = "temp/run/rod_" + RandomStringHelper.getRandomStringOnlyLetters(20) + ".txt";
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName));
             objectOutputStream.writeObject(run);
             objectOutputStream.close();
 
             new Thread(() -> {
                 try {
-                    exec(TestMain.class, null, Collections.singletonList(fileName));
+                    exec(ServerApplicationMain.class, null, Collections.singletonList(fileName));
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -44,7 +44,7 @@ public class RunController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    public static int exec(Class clazz, List<String> jvmArgs, List<String> args) throws IOException,
+    public static int exec(Class<?> clazz, List<String> jvmArgs, List<String> args) throws IOException,
             InterruptedException {
         String javaHome = System.getProperty("java.home");
         String javaBin = javaHome + File.separator + "bin" + File.separator + "java";

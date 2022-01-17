@@ -1,9 +1,12 @@
 package com.scraperservice.manager;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Component
 public class CompletableFutureManager<T> implements Runnable {
     private final Queue<CompletableFuture<T>> completableFutureManagerQueue = new ConcurrentLinkedQueue<>();
 

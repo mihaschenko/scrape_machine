@@ -1,7 +1,7 @@
-package com.scraperservice.application.controller;
+package com.web.application.controller;
 
-import com.scraperservice.application.entity.Config;
-import com.scraperservice.application.service.ConfigService;
+import com.web.application.entity.Config;
+import com.web.application.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
