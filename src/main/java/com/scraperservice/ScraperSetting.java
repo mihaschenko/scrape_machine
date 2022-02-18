@@ -25,6 +25,7 @@ public class ScraperSetting {
     protected Class<? extends Connection> connectionClass;
     protected List<String> startLinks;
     protected boolean isUseProxy;
+    protected boolean isSaveRemoteServer;
 
     public ScraperSetting() {}
     public ScraperSetting(Scraper scraper) {
@@ -41,13 +42,15 @@ public class ScraperSetting {
         this.connectionClass = connectionClass;
         this.startLinks = startLinks;
         this.isUseProxy = isUseProxy;
+        this.isSaveRemoteServer = false;
     }
 
     public void choice() throws Exception {
         setScraper();
         setConnection();
         setStartLinks();
-        setUseProxy();
+        isUseProxy = false;
+        setSaveRemoteServer();
     }
 
     private void setScraper()
@@ -132,6 +135,24 @@ public class ScraperSetting {
             }
             else if(result.equals("N")) {
                 isUseProxy = false;
+                break;
+            }
+            else
+                System.out.println("Incorrect answer. Try again!");
+        }
+    }
+
+    private void setSaveRemoteServer() throws IOException {
+        String result;
+        System.out.println("IV. CHOOSE WHETHER TO SAVE DATA INTO REMOTE SERVER (Y/N)");
+        while (true) {
+            result = ConsoleHelper.readLine().trim();
+            if(result.equals("Y")) {
+                isSaveRemoteServer = true;
+                break;
+            }
+            else if(result.equals("N")) {
+                isSaveRemoteServer = false;
                 break;
             }
             else

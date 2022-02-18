@@ -62,8 +62,10 @@ public class SeleniumConnection extends Connection {
     }
 
     @Override
-    public void close() throws Exception {
-        if(driver != null)
+    public void close() {
+        if(driver != null) {
             driver.quit();
+            driver = null;
+        }
     }
 }

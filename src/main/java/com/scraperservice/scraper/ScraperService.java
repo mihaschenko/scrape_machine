@@ -1,5 +1,6 @@
 package com.scraperservice.scraper;
 
+import com.scraperservice.scraper.page.PageData;
 import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
 import com.scraperservice.storage.DataCell;
@@ -75,8 +76,9 @@ public class ScraperService extends Scraper {
     }
 
     @Override
-    public List<DataArray> scrapeData(Document document, String productUrl) throws Exception {
-        DataArray dataArray = new DataArray(ScrapeUtils.joinBaseUrlAndLink(baseSiteUrl, productUrl));
+    public List<DataArray> scrapeData(PageData pageData) throws Exception {
+        Document document = pageData.html;
+        DataArray dataArray = new DataArray(ScrapeUtils.joinBaseUrlAndLink(baseSiteUrl, pageData.url));
         for (ProductDataInfo pdi : productDataInfoList) {
             String data = String.join("\n", scrapeData(document, pdi));
             dataArray.add(new DataCell(pdi.name, data, pdi.important));
@@ -85,7 +87,8 @@ public class ScraperService extends Scraper {
     }
 
     @Override
-    public PageType getPageType(Document document) throws Exception {
+    public PageType getPageType(PageData pageData) throws Exception {
+        Document document = pageData.html;
         String notProductSelector = String.join(",", categorySelector, subcategorySelector, productSelector);
         boolean isProductPage = document.selectFirst(isProductSelector) != null;
         boolean isNotProductPage = document.selectFirst(notProductSelector) != null;
@@ -105,35 +108,33 @@ public class ScraperService extends Scraper {
     }
 
     @Override
-    public List<String> scrapeCategories(Document document) throws Exception {
+    public List<String> scrapeCategories(PageData pageData) throws Exception {
+        Document document = pageData.html;
         return ScrapeUtils.getAttributes(document, categorySelector, "href")
                 .stream().map(link -> ScrapeUtils.joinBaseUrlAndLink(baseSiteUrl, link))
                 .toList();
     }
 
     @Override
-    public List<String> scrapeSubCategories(Document document) throws Exception {
+    public List<String> scrapeSubCategories(PageData pageData) throws Exception {
+        Document document = pageData.html;
         return ScrapeUtils.getAttributes(document, subcategorySelector, "href")
                 .stream().map(link -> ScrapeUtils.joinBaseUrlAndLink(baseSiteUrl, link))
                 .toList();
     }
 
     @Override
-    public List<String> scrapeLinksToProductPages(Document document) throws Exception {
+    public List<String> scrapeLinksToProductPages(PageData pageData) throws Exception {
+        Document document = pageData.html;
         return ScrapeUtils.getAttributes(document, productSelector, "href")
                 .stream().map(link -> ScrapeUtils.joinBaseUrlAndLink(baseSiteUrl, link))
                 .toList();
     }
 
     @Override
-    public String goToNextPage(Document document) throws Exception {
-        return ScrapeUtils.joinBaseUrlAndLink(baseSiteUrl,
-                ScrapeUtils.getAttribute(document, nextPageSelector, "href"));
-    }
-
-    @Override
-    public String goToNextPage(String categoryPage) {
+    public String goToNextPage(PageData pageData) throws Exception {
         if(nextPageGET != null && !nextPageGET.isEmpty()) {
+            String categoryPage = pageData.url;
             String pageCounter = RegexUtils.findText("(?<=" + nextPageGET + "=)[0-9]+", categoryPage);
             if(!pageCounter.isEmpty()) {
                 int page = Integer.parseInt(pageCounter);
@@ -142,7 +143,9 @@ public class ScraperService extends Scraper {
                 return categoryPage;
             }
         }
-        return null;
+        Document document = pageData.html;
+        return ScrapeUtils.joinBaseUrlAndLink(baseSiteUrl,
+                ScrapeUtils.getAttribute(document, nextPageSelector, "href"));
     }
 
     private List<String> scrapeData(Document document, ProductDataInfo productDataInfo) {

@@ -21,10 +21,8 @@ public class TableUtils {
             SimpleJsonString json = new SimpleJsonString();
             for (String[] m : matrix) {
                 List<String> values = Arrays.stream(m)
-                        .skip(1).distinct().collect(Collectors.toList());
+                        .skip(1).distinct().toList();
 
-                if(values.size() == 1 && values.get(0).equals(m[0]))
-                    continue;
                 if (values.size() > 1)
                     json.openArray(m[0]);
                 for (String value : values) {

@@ -1,6 +1,5 @@
 package com.scraperservice;
 
-import com.scraperservice.context.PresetScraperContext;
 import com.scraperservice.manager.ScrapeManager;
 import com.scraperservice.scraper.ScraperService;
 import com.web.application.entity.Run;

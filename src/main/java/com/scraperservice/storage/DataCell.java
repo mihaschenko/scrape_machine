@@ -2,6 +2,7 @@ package com.scraperservice.storage;
 
 import net.jcip.annotations.ThreadSafe;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @ThreadSafe

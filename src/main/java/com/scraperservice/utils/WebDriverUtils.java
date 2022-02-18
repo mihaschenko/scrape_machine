@@ -2,6 +2,7 @@ package com.scraperservice.utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 public class WebDriverUtils {
     /**
@@ -32,14 +34,18 @@ public class WebDriverUtils {
      * @param amount количество ожидаемых элементов
      * @throws IllegalArgumentException int amount < 0
      */
-    public static void waitElements(WebDriver driver, String cssSelector, int seconds, int amount) {
+    public static boolean waitElements(WebDriver driver, String cssSelector, int seconds, int amount) {
         if(amount < 0)
             throw new IllegalArgumentException("int amount < 0");
-        new WebDriverWait(driver, seconds).until(
-                webDriver -> {
-                    List<WebElement> elements = webDriver.findElements(By.cssSelector(cssSelector));
-                    return elements.size() >= amount;
-                });
+        try{
+            new WebDriverWait(driver, seconds).until(
+                    webDriver -> {
+                        List<WebElement> elements = webDriver.findElements(By.cssSelector(cssSelector));
+                        return elements.size() >= amount;
+                    });
+        }
+        catch (Exception ignore) { return false; }
+        return true;
     }
 
     /**
@@ -235,6 +241,10 @@ public class WebDriverUtils {
                 webDriver -> (Boolean) (((JavascriptExecutor) webDriver).executeScript("return jQuery.active == 0")));
     }
 
+    public static void wait(WebDriver driver, int seconds, Function<? super WebDriver, Boolean> function) {
+        new WebDriverWait(driver, seconds).until(function);
+    }
+
     /**
      * Прокутка страницы до окончания её пагинации. Полезно, если товары на странице подгружаются
      * при прокрутке к концу списка
@@ -329,6 +339,16 @@ public class WebDriverUtils {
             windowHandles.remove(0);
             for(String windowName : windowHandles)
                 driver.switchTo().window(windowName).close();
+        }
+    }
+
+    public static void clickOnElementUsingMatrix(WebDriver driver, int[][] matrix, List<WebElement>[] variants) {
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                if(matrix[i][j] == 1) {
+                    clickOnElementJavaScript(driver, variants[i].get(j));
+                }
+            }
         }
     }
 

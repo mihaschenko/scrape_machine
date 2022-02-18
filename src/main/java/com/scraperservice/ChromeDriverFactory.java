@@ -1,10 +1,16 @@
 package com.scraperservice;
 
+import com.scraperservice.proxy.ProxyAuthenticator;
+import com.scraperservice.proxy.ProxyProperty;
+import org.openqa.selenium.Proxy;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.Authenticator;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +29,7 @@ public class ChromeDriverFactory {
     //private final String pathToBrowser;
     private final boolean headless;
     private final int implicitlyWaitSeconds;
+    private final boolean isUseProxy;
 
     public static ChromeDriverFactory getInstance() {
         return chromeDriverFactory;
@@ -35,6 +42,7 @@ public class ChromeDriverFactory {
         //pathToBrowser = properties.getProperty("webDriver.pathToBrowser");
         headless = properties.getProperty("webDriver.headless").equals("true");
         implicitlyWaitSeconds = Integer.parseInt(properties.getProperty("webDriver.implicitlyWaitSeconds"));
+        isUseProxy = properties.getProperty("webDriver.proxy").equals("true");
     }
 
     public ChromeDriver getChromeDriver() {
@@ -56,6 +64,21 @@ public class ChromeDriverFactory {
         chromeOptions.addArguments("--no-sandbox"); // Bypass OS security model
         chromeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36");
         chromeOptions.addArguments("--incognito", "--disable-blink-features=AutomationControlled");
+
+        if(isUseProxy) {
+            AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("com.scraperservice.proxy");
+            ProxyProperty proxyProperty = context.getBean(ProxyProperty.class);
+
+            /*Proxy proxy = new Proxy();
+            proxy.setProxyType(Proxy.ProxyType.MANUAL);
+            System.out.println(proxyProperty.getHost() + ":" + proxyProperty.getPort());
+            proxy.setHttpProxy(proxyProperty.getHost() + ":" + proxyProperty.getPort());
+            chromeOptions.setProxy(proxy);*/
+
+            ProxyAuthenticator proxyAuthenticator = context.getBean(ProxyAuthenticator.class);
+            Authenticator.setDefault(proxyAuthenticator);
+            chromeOptions.addArguments("--proxy-server=" + proxyProperty.getHost() + ":" + proxyProperty.getPort());
+        }
 
         chromeDriver = new ChromeDriver(chromeOptions);
 

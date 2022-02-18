@@ -11,8 +11,6 @@ import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,7 +20,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 @Data
 public class ScrapeManager implements Runnable {
     @Autowired
@@ -73,9 +70,11 @@ public class ScrapeManager implements Runnable {
                         finally {
                             connectionPool.release(connection);
                         }
-                        pageData.pageType = scraper.getPageType(pageData.html);
+                        pageData.pageType = scraper.getPageType(pageData);
                         if(pageData.pageType == PageType.UNDEFINED)
                             LogHelper.getLogger().log(Level.WARNING, "UNDEFINED: " + link);
+                        else
+                            LogHelper.getLogger().log(Level.FINE, pageData.pageType + ": " + link);
 
                         return pageData;
                     }
@@ -88,57 +87,42 @@ public class ScrapeManager implements Runnable {
                 CompletableFuture<Void> categoryCompletableFuture = pageDataFuture.thenApplyAsync(pageData -> {
                     try{
                         if(pageData.pageType.isCategory()) {
-                            List<String> category = scraper.scrapeCategories(pageData.html);
-                            if (category != null && category.size() > 0)
+                            List<String> category = scraper.scrapeCategories(pageData);
+                            List<String> subCategory = scraper.scrapeSubCategories(pageData);
+                            List<String> products = scraper.scrapeLinksToProductPages(pageData);
+                            boolean isPageHasLinks = false;
+                            if (category != null && category.size() > 0) {
                                 linksQueue.addAll(category);
-                        }
-                        return pageData;
-                    }
-                    catch (Exception e) {
-                        LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);
-                        throw new IllegalStateException(e);
-                    }
-                }, taskPool).thenApply(pageData -> {
-                    try{
-                        if(pageData.pageType.isCategory()) {
-                            List<String> subCategory = scraper.scrapeSubCategories(pageData.html);
-                            if (subCategory != null && subCategory.size() > 0)
+                                isPageHasLinks = true;
+                            }
+                            if (subCategory != null && subCategory.size() > 0) {
                                 linksQueue.addAll(subCategory);
-                        }
-                        return pageData;
-                    }
-                    catch (Exception e) {
-                        LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);
-                        throw new IllegalStateException(e);
-                    }
-                }).thenApply(pageData -> {
-                    try{
-                        if(pageData.pageType.isCategory()) {
-                            List<String> products = scraper.scrapeLinksToProductPages(pageData.html);
-                            if (products != null && products.size() > 0)
+                                isPageHasLinks = true;
+                            }
+                            if (products != null && products.size() > 0) {
                                 linksQueue.addAll(products);
-                            else
+                                isPageHasLinks = true;
+                            }
+                            if(!isPageHasLinks)
                                 throw new DoNotHaveAnyProductLinksException();
                         }
                         return pageData;
                     }
                     catch (Exception e) {
-                        LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                        LogHelper.getLogger().log(Level.SEVERE, link + " : " + e.getMessage(), e);
                         throw new IllegalStateException(e);
                     }
-                }).thenAccept(pageData -> {
+                }, taskPool)
+                .thenAccept(pageData -> {
                     try{
                         if(pageData.pageType.isCategory()) {
-                            String nextPageUrlFirstVariant = scraper.goToNextPage(pageData.html);
-                            String nextPageUrlSecondVariant = scraper.goToNextPage(pageData.url);
+                            String nextPageUrlFirstVariant = scraper.goToNextPage(pageData);
                             if (nextPageUrlFirstVariant != null && !nextPageUrlFirstVariant.isEmpty())
                                 linksQueue.add(nextPageUrlFirstVariant);
-                            if (nextPageUrlSecondVariant != null && !nextPageUrlSecondVariant.isEmpty())
-                                linksQueue.add(nextPageUrlSecondVariant);
                         }
                     }
                     catch (Exception e) {
-                        LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                        LogHelper.getLogger().log(Level.SEVERE, link + " : " + e.getMessage(), e);
                         throw new IllegalStateException(e);
                     }
                 });
@@ -146,11 +130,11 @@ public class ScrapeManager implements Runnable {
                 CompletableFuture<Void> productCompletableFuture = pageDataFuture.thenAcceptAsync(pageData -> {
                     try{
                         if(pageData.pageType.isProduct())
-                            dataSaveManager.writeDataArray(scraper.scrapeData(pageData.html, pageData.url)
+                            dataSaveManager.writeDataArray(scraper.scrapeData(pageData)
                                     .stream().filter(DataArray::checkAllNecessaryCells).collect(Collectors.toList()));
                     }
                     catch (Exception e) {
-                        LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                        LogHelper.getLogger().log(Level.SEVERE, link + " : " + e.getMessage(), e);
                         throw new IllegalStateException(e);
                     }
                 }, taskPool);

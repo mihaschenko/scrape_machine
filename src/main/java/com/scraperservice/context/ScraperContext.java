@@ -10,6 +10,8 @@ import com.scraperservice.manager.DataSaveManager;
 import com.scraperservice.queue.ConcurrentLinkedQueueUnique;
 import com.scraperservice.scraper.Scraper;
 import com.scraperservice.storage.writer.CSVDataWriter;
+import com.scraperservice.storage.writer.RemoteServerDataWriter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 
 import java.io.IOException;
@@ -20,12 +22,18 @@ import java.util.concurrent.Executors;
 
 @Configuration
 @ComponentScan(value = "com.scraperservice")
+@PropertySources({@PropertySource("classpath:scraperApplication.properties"),
+    @PropertySource("classpath:remoteServerStorage.properties")})
 public class ScraperContext {
     @Bean
     @Scope("singleton")
-    public DataSaveManager dataSaveManager(ScraperSetting scraperSetting) throws IOException {
+    public DataSaveManager dataSaveManager(ScraperSetting scraperSetting,
+                                           @Value("${remote.storage.url}") String url,
+                                           @Value("${remote.storage.key}") String key) throws IOException {
         DataSaveManager dataSaveManager = new DataSaveManager();
         dataSaveManager.addDataWriter(new CSVDataWriter(scraperSetting.getScraper().getClass().getSimpleName()));
+        if(scraperSetting.isSaveRemoteServer())
+            dataSaveManager.addDataWriter(new RemoteServerDataWriter(url, key));
         return dataSaveManager;
     }
 
@@ -37,22 +45,24 @@ public class ScraperContext {
 
     @Bean
     @Scope("singleton")
-    public ExecutorService executorService() {
-        return Executors.newFixedThreadPool(10);
+    public ExecutorService executorService(@Value("${scraper.manager.task.pool}") int taskPoolSize) {
+        return Executors.newFixedThreadPool(taskPoolSize);
     }
 
     @Bean
     @Scope("singleton")
-    public ConnectionPool connectionPool(ScraperSetting scraperSetting)
+    public ConnectionPool connectionPool(ScraperSetting scraperSetting,
+                                         @Value("${scraper.manager.connection.jsoup.pool}") int jsoupPoolSize,
+                                         @Value("${scraper.manager.connection.selenium.pool}") int SeleniumPoolSize)
             throws InvocationTargetException, InstantiationException, IllegalAccessException {
         int connectionPoolSize;
         Class<? extends Connection> connectionClass = scraperSetting.getConnectionClass();
         if(connectionClass.isAssignableFrom(SeleniumConnection.class))
-            connectionPoolSize = 3;
+            connectionPoolSize = SeleniumPoolSize;
         else if(connectionClass.isAssignableFrom(JsoupConnection.class))
-            connectionPoolSize = 10;
+            connectionPoolSize = jsoupPoolSize;
         else
-            connectionPoolSize = 5;
+            throw new RuntimeException();
         return new ConnectionPool(connectionPoolSize, scraperSetting.getConnectionClass(), new Object[0]);
     }
 
@@ -64,5 +74,13 @@ public class ScraperContext {
         if(scraperSetting.getStartLinks() != null)
             concurrentLinkedQueueUnique.addAll(scraperSetting.getStartLinks());
         return concurrentLinkedQueueUnique;
+    }
+
+    @Bean
+    @Scope("singleton")
+    public ScraperSetting scraperSetting() throws Exception {
+        ScraperSetting scraperSetting = new ScraperSetting();
+        scraperSetting.choice();
+        return scraperSetting;
     }
 }
