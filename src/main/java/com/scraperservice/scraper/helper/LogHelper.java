@@ -20,7 +20,7 @@ public class LogHelper {
 
     static {
         try {
-            LogManager.getLogManager().readConfiguration(new FileInputStream("src/main/resources/logConfig.properties"));
+            LogManager.getLogManager().readConfiguration(new FileInputStream("src/main/resources/log.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -7,7 +7,7 @@ import org.jsoup.select.Elements;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TableUtils {
+public class TableUtil {
     /**
      * Таблица преобразуется в json строку. Заголовок находится слева.
      * Теги 'thead' и 'tbody' игнорируются
@@ -346,14 +346,14 @@ public class TableUtils {
                             }
                             if(!cell.hasText() && cell.selectFirst("img[src]") != null)
                                 fillMatrixHardCell(matrix, i, j, rowspan, colspan,
-                                        ScrapeUtils.getAttribute(cell, "img", "abs:src"));
+                                        ScrapeUtil.getAttribute(cell, "img", "abs:src"));
                             else
                                 fillMatrixHardCell(matrix, i, j, rowspan, colspan,
                                     isHtml ? cell.outerHtml() : cell.text().trim());
                         }
                         else {
                             if(!cell.hasText() && cell.selectFirst("img[src]") != null)
-                                matrix[i][j] = ScrapeUtils.getAttribute(cell, "img", "abs:src");
+                                matrix[i][j] = ScrapeUtil.getAttribute(cell, "img", "abs:src");
                             else
                                 matrix[i][j] = isHtml ? cell.outerHtml() : cell.text().trim();
                         }

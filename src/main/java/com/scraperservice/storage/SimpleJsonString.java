@@ -28,7 +28,7 @@ public class SimpleJsonString {
         if(name == null || name.isEmpty() || value == null)
             return;
         writeComma();
-        string.append("\"").append(name).append("\": \"").append(value).append("\"");
+        string.append("\"").append(closeSlash(name)).append("\": \"").append(closeSlash(value)).append("\"");
         itemCounter++;
     }
 
@@ -46,7 +46,7 @@ public class SimpleJsonString {
     public synchronized void writeNewItem(String name) {
         if(name != null) {
             writeComma();
-            string.append("\"").append(name).append("\"");
+            string.append("\"").append(closeSlash(name)).append("\"");
             itemCounter++;
         }
     }
@@ -117,6 +117,10 @@ public class SimpleJsonString {
     private void writeComma() {
         if(itemCounter > 0)
             string.append(", ");
+    }
+
+    private String closeSlash(String str) {
+        return str.replaceAll("\"", "\\\\\"");
     }
 
     @Override

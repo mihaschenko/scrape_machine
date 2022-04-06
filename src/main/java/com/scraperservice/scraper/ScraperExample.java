@@ -4,8 +4,7 @@ import com.scraperservice.scraper.page.PageData;
 import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
 import com.scraperservice.storage.DataCell;
-import com.scraperservice.utils.RegexUtils;
-import com.scraperservice.utils.ScrapeUtils;
+import com.scraperservice.utils.ScrapeUtil;
 import org.jsoup.nodes.Document;
 
 import java.util.Collections;
@@ -26,17 +25,17 @@ public class ScraperExample extends Scraper {
 
     @Override
     public List<DataArray> scrapeData(PageData pageData) {
-        Document document = pageData.html;
-        DataArray dataArray = new DataArray(pageData.url);
-        dataArray.add(new DataCell(1, "name", ScrapeUtils.getText(document, NAME_SELECTOR)));
-        dataArray.add(new DataCell(2, "article", ScrapeUtils.getText(document, ARTICLE_SELECTOR)));
-        dataArray.add(new DataCell(3, "price", ScrapeUtils.getText(document, PRICE_SELECTOR)));
+        Document document = pageData.getHtml();
+        DataArray dataArray = new DataArray(pageData.getUrl());
+        dataArray.add(new DataCell(1, "name", ScrapeUtil.getText(document, NAME_SELECTOR)));
+        dataArray.add(new DataCell(2, "article", ScrapeUtil.getText(document, ARTICLE_SELECTOR)));
+        dataArray.add(new DataCell(3, "price", ScrapeUtil.getText(document, PRICE_SELECTOR)));
         return Collections.singletonList(dataArray);
     }
 
     @Override
     public PageType getPageType(PageData pageData) {
-        Document document = pageData.html;
+        Document document = pageData.getHtml();
         boolean isHaveCategoryPageSign = document.selectFirst(String.join(",",
                 CATEGORY_SELECTOR, SUBCATEGORY_SELECTOR, NEXT_PAGE_SELECTOR, PRODUCT_SELECTOR)) != null;
         boolean isHaveProductPageSign = document.selectFirst(NAME_SELECTOR) != null;
@@ -57,32 +56,32 @@ public class ScraperExample extends Scraper {
 
     @Override
     public List<String> scrapeCategories(PageData pageData) {
-        Document document = pageData.html;
-        return ScrapeUtils.getAttributes(document, CATEGORY_SELECTOR, "href")
-                .stream().map(link -> ScrapeUtils.joinBaseUrlAndLink(BASE_SITE_URL, link))
+        Document document = pageData.getHtml();
+        return ScrapeUtil.getAttributes(document, CATEGORY_SELECTOR, "href")
+                .stream().map(link -> ScrapeUtil.joinBaseUrlAndLink(BASE_SITE_URL, link))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<String> scrapeSubCategories(PageData pageData) {
-        Document document = pageData.html;
-        return ScrapeUtils.getAttributes(document, SUBCATEGORY_SELECTOR, "href")
-                .stream().map(link -> ScrapeUtils.joinBaseUrlAndLink(BASE_SITE_URL, link))
+        Document document = pageData.getHtml();
+        return ScrapeUtil.getAttributes(document, SUBCATEGORY_SELECTOR, "href")
+                .stream().map(link -> ScrapeUtil.joinBaseUrlAndLink(BASE_SITE_URL, link))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<String> scrapeLinksToProductPages(PageData pageData) {
-        Document document = pageData.html;
-        return ScrapeUtils.getAttributes(document, PRODUCT_SELECTOR, "href")
-                .stream().map(link -> ScrapeUtils.joinBaseUrlAndLink(BASE_SITE_URL, link))
+        Document document = pageData.getHtml();
+        return ScrapeUtil.getAttributes(document, PRODUCT_SELECTOR, "href")
+                .stream().map(link -> ScrapeUtil.joinBaseUrlAndLink(BASE_SITE_URL, link))
                 .collect(Collectors.toList());
     }
 
     @Override
     public String goToNextPage(PageData pageData) {
-        Document document = pageData.html;
-        return ScrapeUtils.joinBaseUrlAndLink(BASE_SITE_URL,
-                ScrapeUtils.getAttribute(document, NEXT_PAGE_SELECTOR, "href"));
+        Document document = pageData.getHtml();
+        return ScrapeUtil.joinBaseUrlAndLink(BASE_SITE_URL,
+                ScrapeUtil.getAttribute(document, NEXT_PAGE_SELECTOR, "href"));
     }
 }

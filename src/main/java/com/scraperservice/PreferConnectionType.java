@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface PreferConnectionType {
     ConnectionType value();
+    boolean isUseProxy() default false;
 
     enum ConnectionType {
         SeleniumConnection,

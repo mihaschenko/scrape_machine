@@ -1,6 +1,5 @@
 package com.scraperservice.connection.setting;
 
-import com.scraperservice.proxy.ProxyProperty;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -8,33 +7,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Use for custom connection. Some settings only work when connecting via jsoup/selenium
+ */
 @Data
 public class ConnectionProperties {
-    private static final ConnectionProperties DEFAULT_CONNECTION_PROPERTIES = new ConnectionProperties();
-
-    public static ConnectionProperties getDEFAULT_CONNECTION_PROPERTIES() { return DEFAULT_CONNECTION_PROPERTIES; }
-
     private Map<String, String> cookie;
     private Method method;
     private Map<String, String> data;
-    private boolean useDefaultPreparation;
-    private boolean getJson;
     private List<String> waitForIt;
     private List<ConnectionEvent> events;
-    private int delay = 0;
-    private boolean useProxy;
-    private ProxyProperty proxyProperty;
+    private int delay;
 
     public ConnectionProperties() {
         method = Method.GET;
-        useDefaultPreparation = true;
-        getJson = false;
         cookie = new HashMap<>();
         data = new HashMap<>();
         waitForIt = new ArrayList<>();
         events = new ArrayList<>();
-        useProxy = false;
-        proxyProperty = null;
+        delay = 0;
+    }
+
+    public ConnectionProperties(ConnectionProperties connectionProperties) {
+        if(connectionProperties == null)
+            throw new NullPointerException("connectionProperties = null");
+        method = connectionProperties.method;
+        cookie = connectionProperties.cookie;
+        data = connectionProperties.data;
+        waitForIt = connectionProperties.waitForIt;
+        events = connectionProperties.events;
+        delay = connectionProperties.delay;
     }
 
     public enum Method {

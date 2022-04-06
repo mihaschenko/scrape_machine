@@ -23,7 +23,7 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public List<DataArray> scrapeData(PageData pageData) throws Exception {
+    public List<DataArray> scrapeData(PageData pageData) {
         List<DataArray> result = scraper.scrapeData(pageData);
         statisticManager.recordProductDataStatistic(result);
         //logger.log(Level.FINEST, "scrape product data (" + (result != null ? result.size() : 0) + ")");
@@ -31,7 +31,7 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public PageType getPageType(PageData pageData) throws Exception {
+    public PageType getPageType(PageData pageData) {
         PageType result = scraper.getPageType(pageData);
         statisticManager.addPageTypeCounter(result, 1);
         //logger.log(Level.FINEST, "PAGE TYPE (" + result + ")");
@@ -39,14 +39,14 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public List<String> getStartLinks() throws Exception {
+    public List<String> getStartLinks() {
         List<String> result = scraper.getStartLinks();
         statisticManager.addLinkAmountCounter((result != null ? result.size() : 0));
         return result;
     }
 
     @Override
-    public List<String> scrapeCategories(PageData pageData) throws Exception {
+    public List<String> scrapeCategories(PageData pageData) {
         List<String> result = scraper.scrapeCategories(pageData);
         statisticManager.addLinkAmountCounter(result != null ? result.size() : 0);
         //logger.log(Level.FINEST, "scrape categories (" + (result != null ? result.size() : 0) + ")");
@@ -54,7 +54,7 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public List<String> scrapeSubCategories(PageData pageData) throws Exception {
+    public List<String> scrapeSubCategories(PageData pageData) {
         List<String> result = scraper.scrapeSubCategories(pageData);
         statisticManager.addLinkAmountCounter(result != null ? result.size() : 0);
         //logger.log(Level.FINEST, "scrape subcategories (" + (result != null ? result.size() : 0) + ")");
@@ -62,7 +62,7 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public List<String> scrapeLinksToProductPages(PageData pageData) throws Exception {
+    public List<String> scrapeLinksToProductPages(PageData pageData) {
         List<String> result = scraper.scrapeLinksToProductPages(pageData);
         statisticManager.addLinkAmountCounter(result != null ? result.size() : 0);
         //logger.log(Level.FINEST, "scrape product pages (" + (result != null ? result.size() : 0) + ")");
@@ -70,7 +70,7 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public String goToNextPage(PageData pageData) throws Exception {
+    public String goToNextPage(PageData pageData) {
         String result = scraper.goToNextPage(pageData);
         statisticManager.addLinkAmountCounter(result != null && !result.isEmpty() ? 1 : 0);
         //logger.log(Level.FINEST, "scrape link to next page (" + (result != null ? result : "null") + ")");
@@ -78,7 +78,7 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public ConnectionProperties getDefaultConnectionSetting() {
-        return scraper.getDefaultConnectionSetting();
+    public ConnectionProperties getDefaultConnectionProperties() {
+        return scraper.getDefaultConnectionProperties();
     }
 }

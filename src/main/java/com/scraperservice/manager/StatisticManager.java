@@ -137,8 +137,4 @@ public class StatisticManager {
 
         return result.toString();
     }
-
-    /*public String toStringAsJson() {
-        return null;
-    }*/
 }

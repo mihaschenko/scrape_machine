@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * Методы предназначены для работы с Jsoup и SeleniumChromeDriver.
  * @author Mihaschenko V.
  */
-public class ScrapeUtils {
+public class ScrapeUtil {
     /**
      * @param document Jsoup Document. Содержит HTML
      * @param selector css селектор
@@ -181,5 +181,16 @@ public class ScrapeUtils {
         return links.stream().map(link -> joinBaseUrlAndLink(baseUrl, link)).collect(Collectors.toList());
     }
 
-    private ScrapeUtils() {}
+    public static String iterateLinkAttribute(String link, String attributeName, int i) {
+        final String regex = String.format("(?<=%s)[0-9]+", attributeName);
+        String pageStr = RegexUtil.findText(regex, link);
+        if(!pageStr.isEmpty()) {
+            int page = Integer.parseInt(pageStr);
+            page+=i;
+            return link.replaceFirst(regex, Integer.toString(page));
+        }
+        return link;
+    }
+
+    private ScrapeUtil() {}
 }

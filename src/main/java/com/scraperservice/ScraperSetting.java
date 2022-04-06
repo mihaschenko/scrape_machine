@@ -45,7 +45,7 @@ public class ScraperSetting {
         this.isSaveRemoteServer = false;
     }
 
-    public void choice() throws Exception {
+    public void init() throws Exception {
         setScraper();
         setConnection();
         setStartLinks();

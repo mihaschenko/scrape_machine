@@ -3,7 +3,8 @@ package com.scraperservice.connection;
 import com.scraperservice.ChromeDriverFactory;
 import com.scraperservice.connection.setting.ConnectionProperties;
 import com.scraperservice.scraper.helper.LogHelper;
-import com.scraperservice.utils.WebDriverUtils;
+import com.scraperservice.utils.WebDriverUtil;
+import lombok.Data;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.Cookie;
@@ -13,6 +14,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.util.Map;
 import java.util.logging.Level;
 
+@Data
 public class SeleniumConnection extends Connection {
     private final ChromeDriverFactory driverFactory;
     private ChromeDriver driver;
@@ -21,32 +23,24 @@ public class SeleniumConnection extends Connection {
         this.driverFactory = ChromeDriverFactory.getInstance();
     }
 
-    public ChromeDriver getDriver() { return driver; }
-
     @Override
     public synchronized Document getPage(String url, ConnectionProperties setting) {
         if(driver == null)
             driver = driverFactory.getChromeDriver();
-        if(setting == null)
-            throw new NullPointerException("ConnectionSetting setting = null");
-
-        if(setting.getCookie() != null && setting.getCookie().size() > 0) {
-            for(Map.Entry<String, String> c : setting.getCookie().entrySet()) {
-                if(driver.manage().getCookieNamed(c.getKey()) == null
-                        || !driver.manage().getCookieNamed(c.getKey()).getValue().equals(c.getValue()))
-                    driver.manage().addCookie(new Cookie(c.getKey(), c.getValue()));
-            }
-        }
 
         driver.navigate().to(url);
 
+        if(setting.getCookie() != null && setting.getCookie().size() > 0) {
+            for(Map.Entry<String, String> c : setting.getCookie().entrySet())
+                driver.manage().addCookie(new Cookie(c.getKey(), c.getValue()));
+            driver.navigate().refresh(); // CHECK THIS STEP
+        }
+
         try{
-            WebDriverUtils.waitPageStateComplete(driver, 10);
-            if(setting.getWaitForIt() != null && setting.getWaitForIt().size() > 0) {
-                for(String waitForIt : setting.getWaitForIt())
-                    WebDriverUtils.waitElement(driver, waitForIt, 10);
-            }
-            WebDriverUtils.waitJQuery(driver, 5);
+            WebDriverUtil.waitPageStateComplete(driver, 10);
+            if(setting.getWaitForIt() != null && setting.getWaitForIt().size() > 0)
+                WebDriverUtil.waitElement(driver, String.join(", ", setting.getWaitForIt()), 30);
+            WebDriverUtil.waitJQuery(driver, 5);
         }
         catch (JavascriptException e) {
             LogHelper.getLogger().log(Level.SEVERE, "exception while SeleniumConnection", e);

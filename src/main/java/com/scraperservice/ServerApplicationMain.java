@@ -1,5 +1,6 @@
 package com.scraperservice;
 
+import com.scraperservice.context.ScraperContext;
 import com.scraperservice.manager.ScrapeManager;
 import com.scraperservice.scraper.ScraperService;
 import com.web.application.entity.Run;
@@ -17,7 +18,7 @@ public class ServerApplicationMain {
             if(run != null) {
                 AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
                 context.registerBean(ScraperSetting.class, new ScraperService(run));
-                context.register(PresetScraperContext.class);
+                context.register(ScraperContext.class);
                 context.refresh();
                 Main.scrapeManager = context.getBean(ScrapeManager.class);
                 Thread managerThread = new Thread(Main.scrapeManager);

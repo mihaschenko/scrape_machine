@@ -5,24 +5,20 @@ import com.scraperservice.storage.DataArray;
 import com.scraperservice.storage.writer.ScraperDataWriter;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
 public class DataSaveManager implements Closeable {
-    private final Set<ScraperDataWriter> dataWriters;
-
-    public DataSaveManager() {
-        dataWriters = new HashSet<>();
-    }
+    private final Set<ScraperDataWriter> dataWriters = new HashSet<>();
 
     public void addDataWriter(ScraperDataWriter dataWriter) {
-        if(dataWriter != null)
-            dataWriters.add(dataWriter);
+        dataWriters.add(dataWriter);
     }
 
-    public void writeDataArray(List<DataArray> dataArray) throws Exception {
+    public void save(List<DataArray> dataArray) throws IOException {
         for(ScraperDataWriter dataWriter : dataWriters)
             dataWriter.writeData(dataArray);
     }

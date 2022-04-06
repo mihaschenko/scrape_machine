@@ -1,4 +1,4 @@
-package com.scraperservice.connection.pool;
+package com.scraperservice.connection;
 
 public interface ObjectPool<T> {
     T acquire() throws InterruptedException;

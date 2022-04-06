@@ -1,6 +1,6 @@
 package com.scraperservice.utils;
 
-public class MatrixUtils {
+public class MatrixUtil {
     /**
      * Итерирует матрицу. Матрица должна быть корректной и заполнена только единицами и нулями.
      * В каждом ряду должна быть только одна единица

@@ -2,7 +2,6 @@ package com.scraperservice.utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -15,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public class WebDriverUtils {
+public class WebDriverUtil {
     /**
      * Ожидает появления элемента на странице.
      * @param driver Selenium WebDriver. Содержит HTML
@@ -352,5 +351,5 @@ public class WebDriverUtils {
         }
     }
 
-    private WebDriverUtils() {}
+    private WebDriverUtil() {}
 }

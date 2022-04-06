@@ -3,7 +3,7 @@ import com.scraperservice.connection.SeleniumConnection;
 import com.scraperservice.connection.setting.ConnectionProperties;
 import com.scraperservice.proxy.ProxyAuthenticator;
 import com.scraperservice.proxy.ProxyProperty;
-import com.scraperservice.utils.ScrapeUtils;
+import com.scraperservice.utils.ScrapeUtil;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -16,8 +16,6 @@ public class ProxyTest {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("com.scraperservice.proxy");
         ProxyProperty proxyProperty = context.getBean(ProxyProperty.class);
         ConnectionProperties connectionProperties = new ConnectionProperties();
-        connectionProperties.setUseProxy(true);
-        connectionProperties.setProxyProperty(proxyProperty);
         ProxyAuthenticator proxyAuthenticator = context.getBean(ProxyAuthenticator.class);
 
         ProxyProperty.setAllProxyProperty(proxyProperty.getHost(), Integer.toString(proxyProperty.getPort()));
@@ -29,14 +27,14 @@ public class ProxyTest {
         Authenticator.setDefault(proxyAuthenticator);
         JsoupConnection connection = new JsoupConnection();
         Document document = connection.getPage("https://www.ipchicken.com", connectionProperties);
-        System.out.println(ScrapeUtils.getText(document, "table p > font[face=\"Verdana, Arial, Helvetica, sans-serif\"]"));
+        System.out.println(ScrapeUtil.getText(document, "table p > font[face=\"Verdana, Arial, Helvetica, sans-serif\"]"));
     }
 
     @Test
     public void proxyTestSelenium() throws Exception {
         try(SeleniumConnection connection = new SeleniumConnection()) {
             Document document = connection.getPage("https://www.ipchicken.com");
-            System.out.println(ScrapeUtils.getText(document, "table p > font[face=\"Verdana, Arial, Helvetica, sans-serif\"]"));
+            System.out.println(ScrapeUtil.getText(document, "table p > font[face=\"Verdana, Arial, Helvetica, sans-serif\"]"));
         }
     }
 }

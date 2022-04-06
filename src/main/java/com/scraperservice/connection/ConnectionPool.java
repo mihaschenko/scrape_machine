@@ -1,7 +1,5 @@
-package com.scraperservice.connection.pool;
+package com.scraperservice.connection;
 
-import com.scraperservice.connection.Connection;
-import com.scraperservice.connection.ConnectionBuilder;
 import com.scraperservice.scraper.helper.LogHelper;
 
 import java.io.Closeable;
@@ -12,13 +10,13 @@ import java.util.logging.Level;
 public class ConnectionPool implements ObjectPool<Connection>, Closeable {
     private final ArrayBlockingQueue<Connection> pool;
 
-    public ConnectionPool(int poolSize, Class<? extends Connection> connectionClass, Object[] parameters)
-            throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    public ConnectionPool(int poolSize, Class<? extends Connection> connectionClass)
+            throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
         if(poolSize < 0)
             throw new IllegalArgumentException("int poolSize < 0");
 
         pool = new ArrayBlockingQueue<>(poolSize);
-        pool.addAll(ConnectionBuilder.build(connectionClass, parameters, poolSize));
+        pool.addAll(ConnectionBuilder.build(connectionClass, poolSize));
     }
 
     @Override

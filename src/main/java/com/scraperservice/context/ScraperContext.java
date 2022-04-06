@@ -5,7 +5,7 @@ import com.scraperservice.ScraperSetting;
 import com.scraperservice.connection.Connection;
 import com.scraperservice.connection.JsoupConnection;
 import com.scraperservice.connection.SeleniumConnection;
-import com.scraperservice.connection.pool.ConnectionPool;
+import com.scraperservice.connection.ConnectionPool;
 import com.scraperservice.manager.DataSaveManager;
 import com.scraperservice.queue.ConcurrentLinkedQueueUnique;
 import com.scraperservice.scraper.Scraper;
@@ -54,7 +54,7 @@ public class ScraperContext {
     public ConnectionPool connectionPool(ScraperSetting scraperSetting,
                                          @Value("${scraper.manager.connection.jsoup.pool}") int jsoupPoolSize,
                                          @Value("${scraper.manager.connection.selenium.pool}") int SeleniumPoolSize)
-            throws InvocationTargetException, InstantiationException, IllegalAccessException {
+            throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
         int connectionPoolSize;
         Class<? extends Connection> connectionClass = scraperSetting.getConnectionClass();
         if(connectionClass.isAssignableFrom(SeleniumConnection.class))
@@ -63,7 +63,7 @@ public class ScraperContext {
             connectionPoolSize = jsoupPoolSize;
         else
             throw new RuntimeException();
-        return new ConnectionPool(connectionPoolSize, scraperSetting.getConnectionClass(), new Object[0]);
+        return new ConnectionPool(connectionPoolSize, scraperSetting.getConnectionClass());
     }
 
     @Bean
@@ -80,7 +80,7 @@ public class ScraperContext {
     @Scope("singleton")
     public ScraperSetting scraperSetting() throws Exception {
         ScraperSetting scraperSetting = new ScraperSetting();
-        scraperSetting.choice();
+        scraperSetting.init();
         return scraperSetting;
     }
 }

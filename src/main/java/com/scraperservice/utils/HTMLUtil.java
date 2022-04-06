@@ -7,14 +7,14 @@ import org.jsoup.select.Elements;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class HTMLUtils {
+public class HTMLUtil {
     private String html;
 
-    public HTMLUtils(Document document) {
+    public HTMLUtil(Document document) {
         this.html = document.outerHtml();
     }
 
-    public HTMLUtils(String html) {
+    public HTMLUtil(String html) {
         this.html = html;
     }
 
@@ -24,16 +24,16 @@ public class HTMLUtils {
         return html;
     }
 
-    public HTMLUtils removeTagAndContent(String tagName) {
+    public HTMLUtil removeTagAndContent(String tagName) {
         Document document = Jsoup.parse(html);
         Elements elements = document.select(tagName);
         if(elements.size() > 0)
             elements.remove();
-        html = document.outerHtml();
+        html = document.body().html();
         return this;
     }
 
-    public HTMLUtils removeTag(String... tagNames) {
+    public HTMLUtil removeTag(String... tagNames) {
         for(String tagName : tagNames) {
             final Pattern pattern = Pattern.compile("<(/|)" + tagName + "( [^>]+?|)>", Pattern.MULTILINE | Pattern.DOTALL);
             final Matcher matcher = pattern.matcher(html);
@@ -42,35 +42,35 @@ public class HTMLUtils {
         return this;
     }
 
-    public HTMLUtils removeLinks() {
+    public HTMLUtil removeLinks() {
         removeTagAndContent("a");
         removeTag("img");
         removeTagAndContent("iframe");
         return this;
     }
 
-    public HTMLUtils removeHTMLComments() {
+    public HTMLUtil removeHTMLComments() {
         final Pattern pattern = Pattern.compile("<!--.+?-->", Pattern.MULTILINE | Pattern.DOTALL);
         final Matcher matcher = pattern.matcher(html);
         html = matcher.replaceAll("");
         return this;
     }
 
-    public HTMLUtils removeEmptyLines() {
+    public HTMLUtil removeEmptyLines() {
         final Pattern pattern = Pattern.compile("(?<=\\n)(\\s+?|)\\n", Pattern.MULTILINE | Pattern.DOTALL);
         final Matcher matcher = pattern.matcher(html);
         html = matcher.replaceAll("");
         return this;
     }
 
-    public HTMLUtils removeHTMLAttributes() {
+    public HTMLUtil removeHTMLAttributes() {
         final Pattern pattern = Pattern.compile(" [^<]+?(?=>)", Pattern.MULTILINE | Pattern.DOTALL);
         final Matcher matcher = pattern.matcher(html);
         html = matcher.replaceAll("");
         return this;
     }
 
-    public HTMLUtils removeHTMLAttributes(String... attributeNames) {
+    public HTMLUtil removeHTMLAttributes(String... attributeNames) {
         for(String atName : attributeNames) {
             final Pattern pattern = Pattern.compile(" " + atName + "(=\"[^\"]*?\"|)", Pattern.MULTILINE | Pattern.DOTALL);
             final Matcher matcher = pattern.matcher(html);
@@ -79,7 +79,7 @@ public class HTMLUtils {
         return this;
     }
 
-    public HTMLUtils removeEmptyTags() {
+    public HTMLUtil removeEmptyTags() {
         boolean compareFound = true;
         Pattern pattern = Pattern.compile("<(?<tag>(?!td)[a-z]+?)( [^>]+?|)>\\s*?</(\\k<tag>)>", Pattern.MULTILINE | Pattern.DOTALL);
         while (compareFound) {
@@ -93,7 +93,7 @@ public class HTMLUtils {
         return this;
     }
 
-    public HTMLUtils removeCommentsAttrAndEmptyLines() {
+    public HTMLUtil removeCommentsAttrAndEmptyLines() {
         removeHTMLComments();
         removeHTMLAttributes();
         removeEmptyTags();
@@ -101,7 +101,7 @@ public class HTMLUtils {
         return this;
     }
 
-    public HTMLUtils removeCommentsAndEmptyLines() {
+    public HTMLUtil removeCommentsAndEmptyLines() {
         removeHTMLComments();
         removeEmptyTags();
         removeEmptyLines();

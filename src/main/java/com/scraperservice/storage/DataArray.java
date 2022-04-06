@@ -3,7 +3,6 @@ package com.scraperservice.storage;
 import net.jcip.annotations.ThreadSafe;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -13,28 +12,27 @@ public class DataArray extends CopyOnWriteArrayList<DataCell> {
      * Ссылка на продукт. Рекомендуется полная ссылка
      */
     private final String url;
-    private final String urlColumnName;
+    private final boolean includeUrl;
 
     /**
      * @param url ссылка на продукт. Рекомендуется полная ссылка
      * @throws NullPointerException если переменная url = null
      */
     public DataArray(String url) {
-        this(url, "url");
+        this(url, true);
     }
 
-    public DataArray(String url, String urlColumnName) {
+    public DataArray(String url, boolean includeUrl) {
         if(url == null)
             throw new NullPointerException("String url = null");
         this.url = url;
-        this.urlColumnName = urlColumnName;
+        this.includeUrl = includeUrl;
     }
 
     /**
      * @return ссылка на продукт, указанная в конструкторе
      */
     public String getUrl() { return url; }
-    public String getUrlColumnName() { return urlColumnName; }
 
     /**
      * Проверяет все обязательные ячейки на наличие данных.
@@ -106,7 +104,7 @@ public class DataArray extends CopyOnWriteArrayList<DataCell> {
         int i = 1;
         for(DataCell dc : this) {
             if(isTitle)
-                result[i] = dc.getName().toUpperCase();
+                result[i] = dc.getName();
             else
                 result[i] = escapeSlash(dc.getValue());
             i++;

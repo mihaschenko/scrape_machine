@@ -6,7 +6,7 @@ public class ScraperSettingTest {
     @Test
     public void scraperSettingTest() throws Exception {
         ScraperSetting scraperSetting = new ScraperSetting();
-        scraperSetting.choice();
+        scraperSetting.init();
         Assert.assertNotNull(scraperSetting.getScraper());
         System.out.println("Scraper name: " + scraperSetting.getScraper().getClass().getSimpleName());
         Assert.assertNotNull(scraperSetting.getConnectionClass());
