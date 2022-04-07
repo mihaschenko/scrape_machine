@@ -18,4 +18,9 @@ public class PageData {
     private String url;
     private PageType pageType;
     private Document html;
+    private int categoryLinks = 0;
+    private int subcategoryLinks = 0;
+    private int productLinks = 0;
+    private boolean hasLinkToNextPage = false;
+    private int products = 0;
 }
