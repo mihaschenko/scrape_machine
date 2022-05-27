@@ -65,6 +65,8 @@ public class ScrapeManager implements Runnable {
                             pageData.setHtml(connection.getPage(link, scraper.getDefaultConnectionProperties()));
                             pageData.setPageType(scraper.getPageType(pageData));
 
+                            if(pageData.getPageType() == PageType.UNDEFINED)
+                                logCompleteStatus(pageData, false);
                             return pageData;
                         }
                         finally {
@@ -97,7 +99,7 @@ public class ScrapeManager implements Runnable {
                             pageData.setProductLinks(products.size());
                             isPageHasLinks = true;
                         }
-                        if(!isPageHasLinks)
+                        if(!isPageHasLinks && pageData.getPageType() != PageType.CATEGORY_AND_PRODUCT_PAGE)
                             throw new DoNotHaveAnyProductLinksException();
                     }
                     return pageData;
@@ -110,9 +112,10 @@ public class ScrapeManager implements Runnable {
                             pageData.setHasLinkToNextPage(true);
                             linksQueue.add(nextPage);
                         }
+                        logCompleteStatus(pageData, true);
                     }
                     return pageData;
-                }).whenComplete(this::logCompleteStatus);
+                }).whenComplete(this::logException);
 
                 CompletableFuture<PageData> productCompletableFuture = pageDataFuture.thenApplyAsync(pageData -> {
                     // scrape product's data
@@ -122,10 +125,11 @@ public class ScrapeManager implements Runnable {
                             pageData.setProducts(result.size());
                             dataSaveManager.save(result
                                     .stream().filter(DataArray::checkAllNecessaryCells).collect(Collectors.toList()));
+                            logCompleteStatus(pageData, false);
                         } catch (IOException e) { throw new RuntimeException(e); }
                     }
                     return pageData;
-                }, taskPool).whenComplete(this::logCompleteStatus);
+                }, taskPool).whenComplete(this::logException);
 
                 completableFutureManager.add(categoryCompletableFuture);
                 completableFutureManager.add(productCompletableFuture);
@@ -140,21 +144,24 @@ public class ScrapeManager implements Runnable {
         LogHelper.getLogger().log(Level.INFO, StatisticManager.getInstance().toString());
     }
 
-    private void logCompleteStatus(PageData result, Throwable exception) {
+    private void logException(PageData result, Throwable exception) {
         if(exception != null) {
             if(exception.getClass() == DoNotHaveAnyProductLinksException.class)
                 LogHelper.getLogger().log(Level.WARNING, "DO_NOT_HAVE_ANY_PRODUCT_LINKS_EXCEPTION: " + result.getUrl());
             else
                 LogHelper.getLogger().log(Level.SEVERE, result.getUrl() + " : " + exception.getMessage(), exception);
         }
-        else {
+    }
+
+    private void logCompleteStatus(PageData result, boolean isCategoryPage) {
+        if(result != null) {
             if(result.getPageType() == PageType.UNDEFINED)
                 LogHelper.getLogger().log(Level.WARNING, PageType.UNDEFINED + " | " + result.getUrl());
-            else if(result.getPageType().isCategory())
+            else if(isCategoryPage)
                 LogHelper.getLogger().log(Level.INFO, String.format("CATEGORY | %s (C: %d, SB: %d , P: %d , N: %b)",
                         result.getUrl(), result.getCategoryLinks(), result.getSubcategoryLinks(), result.getProductLinks(),
                             result.isHasLinkToNextPage()));
-            else if(result.getPageType().isProduct())
+            else
                 LogHelper.getLogger().log(Level.INFO, String.format("PRODUCT | %s (P: %d, SP: %d)",
                         result.getUrl(), result.getProducts(), result.getProductLinks()));
         }

@@ -40,7 +40,6 @@ public class SeleniumConnection extends Connection {
             WebDriverUtil.waitPageStateComplete(driver, 10);
             if(setting.getWaitForIt() != null && setting.getWaitForIt().size() > 0)
                 WebDriverUtil.waitElement(driver, String.join(", ", setting.getWaitForIt()), 30);
-            WebDriverUtil.waitJQuery(driver, 5);
         }
         catch (JavascriptException e) {
             LogHelper.getLogger().log(Level.SEVERE, "exception while SeleniumConnection", e);
@@ -49,8 +48,20 @@ public class SeleniumConnection extends Connection {
             LogHelper.getLogger().log(Level.WARNING, "selenium wait exception", e);
         }
 
+        try {
+            WebDriverUtil.waitJQuery(driver, 5);
+        }
+        catch (Exception ignore) {}
+
         if(setting.getEvents().size() > 0)
             setting.getEvents().forEach(connectionEvent -> connectionEvent.event(driver));
+
+        if(setting.getDelay() > 0) {
+            try {
+                Thread.sleep(setting.getDelay());
+            }
+            catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+        }
 
         return Jsoup.parse(driver.getPageSource());
     }

@@ -94,14 +94,16 @@ public class DataArray extends CopyOnWriteArrayList<DataCell> {
      * @return возвращается отсортированный массив заголовков или их данных
      */
     private synchronized String[] getArray(boolean isTitle) {
-        String[] result = new String[size()+1];
+        String[] result = new String[includeUrl ? size()+1 : size()];
 
-        if(isTitle)
-            result[0] = "URL";
-        else
-            result[0] = url;
+        if(includeUrl) {
+            if(isTitle)
+                result[0] = "URL";
+            else
+                result[0] = url;
+        }
 
-        int i = 1;
+        int i = includeUrl ? 1 : 0;
         for(DataCell dc : this) {
             if(isTitle)
                 result[i] = dc.getName();

@@ -341,12 +341,11 @@ public class WebDriverUtil {
         }
     }
 
-    public static void clickOnElementUsingMatrix(WebDriver driver, int[][] matrix, List<WebElement>[] variants) {
+    public static void clickOnElementUsingMatrix(WebDriver driver, int[][] matrix, WebElement[][] variants) {
         for(int i = 0; i < matrix.length; i++) {
             for(int j = 0; j < matrix[i].length; j++) {
-                if(matrix[i][j] == 1) {
-                    clickOnElementJavaScript(driver, variants[i].get(j));
-                }
+                if(matrix[i][j] == 1)
+                    clickOnElementJavaScript(driver, variants[i][j]);
             }
         }
     }

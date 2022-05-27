@@ -5,7 +5,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -190,6 +192,20 @@ public class ScrapeUtil {
             return link.replaceFirst(regex, Integer.toString(page));
         }
         return link;
+    }
+
+    public static Map<String, Element> parseTabList(Element document, String tabListHeadSelector, String tabListBodySelector) {
+        Map<String, Element> result = new HashMap<>();
+        List<String> head = getTexts(document, tabListHeadSelector);
+        if(head.size() > 0) {
+            Elements body = document.select(tabListBodySelector);
+            if(head.size() == body.size()) {
+                for(int i = 0; i < head.size(); i++)
+                    result.put(head.get(i).trim(), body.get(i));
+            }
+        }
+
+        return result;
     }
 
     private ScrapeUtil() {}

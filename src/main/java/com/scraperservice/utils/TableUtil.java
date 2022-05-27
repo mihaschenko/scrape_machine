@@ -285,6 +285,32 @@ public class TableUtil {
         return result;
     }
 
+    public static String listLikeTable(Element list, String listCellsSelector) {
+        if(list != null && list.is("ol, ul")) {
+            SimpleJsonString result = new SimpleJsonString();
+            for(Element li : list.select("li")) {
+                List<String> data = ScrapeUtil.getTexts(li, listCellsSelector);
+                if(data.size() == 2)
+                    result.writeNewItem(data.get(0), data.get(1));
+            }
+            return result.toString();
+        }
+        return "";
+    }
+
+    public static String elementLikeTable(Elements rows, String cellSelector) {
+        if(rows != null && rows.size() > 0) {
+            SimpleJsonString result = new SimpleJsonString();
+            for(Element row : rows) {
+                List<String> data = ScrapeUtil.getTexts(row, cellSelector);
+                if(data.size() == 2)
+                    result.writeNewItem(data.get(0), data.get(1));
+            }
+            return result.toString();
+        }
+        return "";
+    }
+
     public static String[][] getMatrix(Element table) {
         return getMatrix(table, false);
     }

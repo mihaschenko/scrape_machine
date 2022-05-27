@@ -50,7 +50,7 @@ public class HTMLUtil {
     }
 
     public HTMLUtil removeHTMLComments() {
-        final Pattern pattern = Pattern.compile("<!--.+?-->", Pattern.MULTILINE | Pattern.DOTALL);
+        final Pattern pattern = Pattern.compile("<!--.*?-->", Pattern.MULTILINE | Pattern.DOTALL);
         final Matcher matcher = pattern.matcher(html);
         html = matcher.replaceAll("");
         return this;

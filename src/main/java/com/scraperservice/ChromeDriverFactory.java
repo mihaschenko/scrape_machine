@@ -64,6 +64,7 @@ public class ChromeDriverFactory {
         chromeOptions.addArguments("--no-sandbox"); // Bypass OS security model
         chromeOptions.addArguments("user-agent=Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36");
         chromeOptions.addArguments("--incognito", "--disable-blink-features=AutomationControlled");
+        chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
 
         if(isUseProxy) {
             AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext("com.scraperservice.proxy");
