@@ -6,6 +6,7 @@ log
 out
 reports
 target
+results
 UniversalScraper.iml
 *.txt
 *.csv
@@ -18,7 +19,5 @@ UniversalScraper.iml
 *TillConnection.java
 *TillConnectionTimer.java
 *proxy.properties
-*application.properties
-*remoteServerStorage.properties
 *.s3db
 *.s3db-journal

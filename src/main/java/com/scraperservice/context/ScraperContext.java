@@ -10,7 +10,6 @@ import com.scraperservice.manager.DataSaveManager;
 import com.scraperservice.queue.ConcurrentLinkedQueueUnique;
 import com.scraperservice.scraper.Scraper;
 import com.scraperservice.storage.writer.CSVDataWriter;
-import com.scraperservice.storage.writer.RemoteServerDataWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 
@@ -22,14 +21,11 @@ import java.util.concurrent.Executors;
 
 @Configuration
 @ComponentScan(value = "com.scraperservice")
-@PropertySources({@PropertySource("classpath:scraperApplication.properties"),
-    @PropertySource("classpath:remoteServerStorage.properties")})
+@PropertySources({@PropertySource("classpath:scraperApplication.properties")})
 public class ScraperContext {
     @Bean
     @Scope("singleton")
-    public DataSaveManager dataSaveManager(ScraperSetting scraperSetting,
-                                           @Value("${remote.storage.url}") String url,
-                                           @Value("${remote.storage.key}") String key) throws IOException {
+    public DataSaveManager dataSaveManager(ScraperSetting scraperSetting) throws IOException {
         DataSaveManager dataSaveManager = new DataSaveManager();
         dataSaveManager.addDataWriter(new CSVDataWriter(scraperSetting.getScraper().getClass().getSimpleName()));
         return dataSaveManager;
