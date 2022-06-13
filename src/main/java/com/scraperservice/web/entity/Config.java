@@ -1,5 +1,6 @@
-package com.web.application.entity;
+package com.scraperservice.web.entity;
 
+import com.scraperservice.web.ConnectWay;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,8 +18,9 @@ public class Config implements Serializable {
     private String name;
     @Column(name = "base_url")
     private String baseUrl;
+    // FIXME need to fix connecting to data base
     @Column(name = "browser_automation")
-    private boolean browserAutomation;
+    private ConnectWay connectWay;
     @Column(name = "category_selector")
     private String categorySelector;
     @Column(name = "subcategory_selector")

@@ -32,8 +32,6 @@ public class ScraperContext {
                                            @Value("${remote.storage.key}") String key) throws IOException {
         DataSaveManager dataSaveManager = new DataSaveManager();
         dataSaveManager.addDataWriter(new CSVDataWriter(scraperSetting.getScraper().getClass().getSimpleName()));
-        if(scraperSetting.isSaveRemoteServer())
-            dataSaveManager.addDataWriter(new RemoteServerDataWriter(url, key));
         return dataSaveManager;
     }
 

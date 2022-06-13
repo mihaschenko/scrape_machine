@@ -50,7 +50,7 @@ public class ScraperSetting {
         setConnection();
         setStartLinks();
         isUseProxy = false;
-        setSaveRemoteServer();
+        isSaveRemoteServer = false;
     }
 
     private void setScraper()
@@ -135,24 +135,6 @@ public class ScraperSetting {
             }
             else if(result.equals("N")) {
                 isUseProxy = false;
-                break;
-            }
-            else
-                System.out.println("Incorrect answer. Try again!");
-        }
-    }
-
-    private void setSaveRemoteServer() throws IOException {
-        String result;
-        System.out.println("IV. CHOOSE WHETHER TO SAVE DATA INTO REMOTE SERVER (Y/N)");
-        while (true) {
-            result = ConsoleHelper.readLine().trim();
-            if(result.equals("Y")) {
-                isSaveRemoteServer = true;
-                break;
-            }
-            else if(result.equals("N")) {
-                isSaveRemoteServer = false;
                 break;
             }
             else

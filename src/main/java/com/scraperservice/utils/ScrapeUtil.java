@@ -208,5 +208,27 @@ public class ScrapeUtil {
         return result;
     }
 
+    public static String iteratePageLink(String url, String parameterName) {
+        if(url == null || url.isEmpty())
+            throw new IllegalArgumentException("url is null or empty = " + url);
+        if(parameterName == null || parameterName.isEmpty())
+            throw new IllegalArgumentException("parameterName is null or empty = " + parameterName);
+        if(url.contains(parameterName)) {
+            final String regex = "(?<=" + parameterName + "=)[0-9]+";
+            String parameterValueStr = RegexUtil.findText(regex, url);
+            if(!parameterValueStr.isEmpty()) {
+                int parameterValue = Integer.parseInt(parameterValueStr);
+                parameterValue++;
+                return url.replaceFirst(regex, Integer.toString(parameterValue));
+            }
+            else
+                throw new IllegalArgumentException("parameter must to contains figures");
+        }
+        else if(url.contains("?"))
+            return url + "&" + parameterName + "=2";
+        else
+            return url + "?" + parameterName + "=2";
+    }
+
     private ScrapeUtil() {}
 }

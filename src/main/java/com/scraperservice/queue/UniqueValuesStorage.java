@@ -32,7 +32,7 @@ public class UniqueValuesStorage implements AutoCloseable {
 
     public boolean checkUniqueValue(String value) {
         int hash = value.hashCode();
-        boolean result = false;
+        boolean result = true;
         synchronized(this) {
             Statement statement;
             try{

@@ -7,8 +7,7 @@ import com.scraperservice.storage.DataCell;
 import com.scraperservice.utils.RegexUtil;
 import com.scraperservice.utils.ScrapeUtil;
 import com.scraperservice.utils.TableUtil;
-import com.web.application.entity.Config;
-import com.web.application.entity.Run;
+import com.scraperservice.web.entity.Config;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;
@@ -35,11 +34,7 @@ public class ScraperService extends Scraper {
     private String isProductSelector;
     private final List<ProductDataInfo> productDataInfoList = new ArrayList<>();
 
-    public ScraperService(Run run) {
-        if(run == null)
-            throw new NullPointerException("Run run = null");
-        Config config = run.getConfig();
-
+    public ScraperService(Config config) {
         baseSiteUrl = config.getBaseUrl();
         //startPages.addAll();
         categorySelector = config.getCategorySelector();
