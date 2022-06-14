@@ -24,8 +24,6 @@ public class ScraperSetting {
     protected Scraper scraper;
     protected Class<? extends Connection> connectionClass;
     protected List<String> startLinks;
-    protected boolean isUseProxy;
-    protected boolean isSaveRemoteServer;
 
     public ScraperSetting() {}
     public ScraperSetting(Scraper scraper) {
@@ -41,16 +39,12 @@ public class ScraperSetting {
         this.scraper = scraper;
         this.connectionClass = connectionClass;
         this.startLinks = startLinks;
-        this.isUseProxy = isUseProxy;
-        this.isSaveRemoteServer = false;
     }
 
     public void init() throws Exception {
         setScraper();
         setConnection();
         setStartLinks();
-        isUseProxy = false;
-        isSaveRemoteServer = false;
     }
 
     private void setScraper()
@@ -124,7 +118,7 @@ public class ScraperSetting {
             startLinks = Collections.emptyList();
     }
 
-    private void setUseProxy() throws IOException {
+    /*private void setUseProxy() throws IOException {
         String result;
         System.out.println("IV. CHOOSE WHETHER TO USE A PROXY OR NOT (Y/N)");
         while (true) {
@@ -140,5 +134,5 @@ public class ScraperSetting {
             else
                 System.out.println("Incorrect answer. Try again!");
         }
-    }
+    }*/
 }

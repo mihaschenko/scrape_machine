@@ -8,15 +8,12 @@ import org.springframework.stereotype.Component;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
-@Component
-@PropertySource("classpath:proxy.properties")
 @Data
 public class ProxyAuthenticator extends Authenticator {
     private final String user;
     private final String password;
 
-    public ProxyAuthenticator(@Value("${proxy.name}") String user,
-                              @Value("${proxy.password}") String password) {
+    public ProxyAuthenticator(String user, String password) {
         this.user = user;
         this.password = password;
     }

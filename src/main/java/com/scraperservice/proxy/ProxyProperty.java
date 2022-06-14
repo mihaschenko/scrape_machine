@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.Random;
 
 @Data
-@Component
-@PropertySource("classpath:proxy.properties")
 public class ProxyProperty {
     private String host;
     private int minPortRange;
@@ -20,10 +18,7 @@ public class ProxyProperty {
         this(host, port, port);
     }
 
-    @Autowired
-    public ProxyProperty(@Value("${proxy.host}") String host,
-                         @Value("${proxy.port.min}") int minPortRange,
-                         @Value("${proxy.port.max}") int maxPortRange) {
+    public ProxyProperty(String host, int minPortRange, int maxPortRange) {
         this.host = host;
         this.minPortRange = minPortRange;
         this.maxPortRange = maxPortRange;
