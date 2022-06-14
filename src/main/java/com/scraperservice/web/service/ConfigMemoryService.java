@@ -2,15 +2,18 @@ package com.scraperservice.web.service;
 
 import com.scraperservice.web.ConnectWay;
 import com.scraperservice.web.entity.Config;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.springframework.stereotype.Service;
 
 @Service("ConfigMemoryService")
-public class ConfigMemoryService implements com.scraperservice.web.service.Service {
+public class ConfigMemoryService implements com.scraperservice.web.service.Service<Config> {
     private final Map<Integer, Config> configs = new ConcurrentHashMap<>();
+    private final AtomicInteger configId = new AtomicInteger(3);
 
     public ConfigMemoryService() {
         Config config1 = new Config();
@@ -25,7 +28,6 @@ public class ConfigMemoryService implements com.scraperservice.web.service.Servi
         config1.setNextPageGet(null);
         config1.setNextPageSelector(null);
         config1.setProductIndicator("h1[itemprop=\"name\"]");
-        config1.setProductDataSelectors("{}");
 
         Config config2 = new Config();
         config2.setId(2);
@@ -39,7 +41,6 @@ public class ConfigMemoryService implements com.scraperservice.web.service.Servi
         config2.setNextPageGet(null);
         config2.setNextPageSelector("li.current + li > a");
         config2.setProductIndicator("h1.name");
-        config2.setProductDataSelectors("{}");
 
         configs.put(config1.getId(), config1);
         configs.put(config2.getId(), config2);
@@ -51,12 +52,19 @@ public class ConfigMemoryService implements com.scraperservice.web.service.Servi
     }
 
     @Override
-    public Config getConfigById(int id) {
+    public Config getById(int id) {
         return configs.get(id);
     }
 
     @Override
     public void delete(int id) {
         configs.remove(id);
+    }
+
+    @Override
+    public void update(Config config) {
+        if(config.getId() == null)
+            config.setId(configId.getAndIncrement());
+        configs.put(config.getId(), config);
     }
 }

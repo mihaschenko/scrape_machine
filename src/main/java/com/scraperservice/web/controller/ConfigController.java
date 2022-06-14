@@ -6,34 +6,46 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
-@RestController
 public class ConfigController {
     @Autowired
     @Qualifier("ConfigMemoryService")
-    private Service configService;
+    private Service<Config> service;
 
     @GetMapping("/config")
-    public ModelAndView getAll() {
-        List<Config> configList = configService.getAll();
-        Map<String, Object> params = new HashMap<>();
-        params.put("configList", configList);
-        params.put("configListSize", configList.size());
-        return new ModelAndView("configList", params);
+    public String getAll(Model model) {
+        List<Config> configList = service.getAll();
+        model.addAttribute("configList", configList);
+        model.addAttribute("configListSize", configList.size());
+        return "config/configList";
     }
 
     @GetMapping("/config/delete")
-    public ModelAndView delete(@RequestParam String id) {
-        configService.delete(Integer.parseInt(id));
-        return new ModelAndView("redirect:/config");
+    public String delete(@RequestParam String id) {
+        service.delete(Integer.parseInt(id));
+        return "redirect:/config";
+    }
+
+    @GetMapping("/config/create")
+    public String create() {
+        return "config/createUpdateConfig";
+    }
+
+    @GetMapping("/config/update")
+    public String update(@RequestParam String id, Model model) {
+        model.addAttribute("config", service.getById(Integer.parseInt(id)));
+        return "config/createUpdateConfig";
+    }
+
+    @PostMapping("/config/update")
+    public String updateOrCreate(Config config) {
+        service.update(config);
+        return "redirect:/config";
     }
 }

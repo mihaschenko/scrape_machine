@@ -8,22 +8,27 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("ConfigJpaService")
-public class ConfigJpaService implements com.scraperservice.web.service.Service {
+public class ConfigJpaService implements com.scraperservice.web.service.Service<Config> {
     @Autowired
-    private ConfigRepository configRepository;
+    private ConfigRepository repository;
 
     @Override
     public List<Config> getAll() {
-        return configRepository.findAll();
+        return repository.findAll();
     }
 
     @Override
-    public Config getConfigById(int id) {
-        return configRepository.getById(id);
+    public Config getById(int id) {
+        return repository.getById(id);
     }
 
     @Override
     public void delete(int id) {
+        repository.deleteById(id);
+    }
 
+    @Override
+    public void update(Config config) {
+        repository.save(config);
     }
 }
