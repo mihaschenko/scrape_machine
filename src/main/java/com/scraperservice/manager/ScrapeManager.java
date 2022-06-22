@@ -1,17 +1,19 @@
 package com.scraperservice.manager;
 
+import com.scraperservice.context.ScraperContext;
 import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.view.StatisticFrameBuilder;
 import com.scraperservice.connection.Connection;
 import com.scraperservice.connection.ConnectionPool;
 import com.scraperservice.exception.DoNotHaveAnyProductLinksException;
-import com.scraperservice.scraper.helper.LogHelper;
+import com.scraperservice.helper.LogHelper;
 import com.scraperservice.scraper.page.PageData;
 import com.scraperservice.queue.ConcurrentLinkedQueueUnique;
 import com.scraperservice.scraper.Scraper;
 import com.scraperservice.storage.DataArray;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,6 +26,16 @@ import java.util.stream.Collectors;
 @Component
 @Data
 public class ScrapeManager implements Runnable {
+    private static ScrapeManager scrapeManager = null;
+
+    public synchronized static ScrapeManager getInstance() {
+        if(scrapeManager == null) {
+            AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ScraperContext.class);
+            scrapeManager = context.getBean(ScrapeManager.class);
+        }
+        return scrapeManager;
+    }
+
     @Autowired
     private final DataSaveManager dataSaveManager;
     @Autowired

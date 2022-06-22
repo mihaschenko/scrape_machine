@@ -69,6 +69,7 @@ public class CSVDataWriter implements ScraperDataWriter {
             updateTempFile();
             csvWriteCounter = 0;
         }
+        writer.flush();
         return true;
     }
 

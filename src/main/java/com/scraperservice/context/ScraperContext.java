@@ -24,7 +24,6 @@ import java.util.concurrent.Executors;
 @PropertySources({@PropertySource("classpath:scraperApplication.properties")})
 public class ScraperContext {
     @Bean
-    @Scope("singleton")
     public DataSaveManager dataSaveManager(ScraperSetting scraperSetting) throws IOException {
         DataSaveManager dataSaveManager = new DataSaveManager();
         dataSaveManager.addDataWriter(new CSVDataWriter(scraperSetting.getScraper().getClass().getSimpleName()));
@@ -32,19 +31,16 @@ public class ScraperContext {
     }
 
     @Bean
-    @Scope("singleton")
     public Scraper scraper(ScraperSetting scraperSetting) {
         return new ScraperLogProxy(scraperSetting.getScraper());
     }
 
     @Bean
-    @Scope("singleton")
     public ExecutorService executorService(@Value("${scraper.manager.task.pool}") int taskPoolSize) {
         return Executors.newFixedThreadPool(taskPoolSize);
     }
 
     @Bean
-    @Scope("singleton")
     public ConnectionPool connectionPool(ScraperSetting scraperSetting,
                                          @Value("${scraper.manager.connection.jsoup.pool}") int jsoupPoolSize,
                                          @Value("${scraper.manager.connection.selenium.pool}") int SeleniumPoolSize)
@@ -61,7 +57,6 @@ public class ScraperContext {
     }
 
     @Bean
-    @Scope("singleton")
     @Primary
     public ConcurrentLinkedQueueUnique concurrentLinkedQueueUnique(ScraperSetting scraperSetting) throws SQLException {
         ConcurrentLinkedQueueUnique concurrentLinkedQueueUnique = new ConcurrentLinkedQueueUnique();
@@ -71,7 +66,6 @@ public class ScraperContext {
     }
 
     @Bean
-    @Scope("singleton")
     public ScraperSetting scraperSetting() throws Exception {
         ScraperSetting scraperSetting = new ScraperSetting();
         scraperSetting.init();

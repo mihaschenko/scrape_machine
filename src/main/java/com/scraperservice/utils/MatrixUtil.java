@@ -2,6 +2,18 @@ package com.scraperservice.utils;
 
 public class MatrixUtil {
     /**
+     * @param rowIndex matrix's row (0 ... matrix.length-1)
+     * @return Cell index with number one
+     */
+    public static int getCellIndexInRow(int[][] matrix, int rowIndex) {
+        for(int i = 0; i < matrix[rowIndex].length; i++) {
+            if(matrix[rowIndex][i] == 1)
+                return i;
+        }
+        throw new IllegalStateException("row don't have number one");
+    }
+
+    /**
      * Итерирует матрицу. Матрица должна быть корректной и заполнена только единицами и нулями.
      * В каждом ряду должна быть только одна единица
      * @return false - все варианты матрицы были пройдены

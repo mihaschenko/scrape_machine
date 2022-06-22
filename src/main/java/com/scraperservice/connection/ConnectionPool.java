@@ -1,6 +1,6 @@
 package com.scraperservice.connection;
 
-import com.scraperservice.scraper.helper.LogHelper;
+import com.scraperservice.helper.LogHelper;
 
 import java.io.Closeable;
 import java.lang.reflect.InvocationTargetException;

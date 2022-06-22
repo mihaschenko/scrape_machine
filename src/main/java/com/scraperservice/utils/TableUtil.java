@@ -58,7 +58,7 @@ public class TableUtil {
                 if (matrix != null) {
                     for (String[] m : matrix) {
                         List<String> values = Arrays.stream(m)
-                                .skip(1).distinct().collect(Collectors.toList());
+                                .skip(1).distinct().toList();
 
                         if(values.size() == 1 && values.get(0).equals(m[0]))
                             continue;

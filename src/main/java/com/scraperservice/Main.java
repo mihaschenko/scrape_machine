@@ -1,18 +1,24 @@
 package com.scraperservice;
 
-import com.scraperservice.context.ScraperContext;
 import com.scraperservice.manager.ScrapeManager;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
-    public static ScrapeManager scrapeManager;
-
     public static void main(String[] args) throws IOException {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ScraperContext.class);
-        scrapeManager = context.getBean(ScrapeManager.class);
-        Thread managerThread = new Thread(scrapeManager);
+        createDirectories();
+        Thread managerThread = new Thread(ScrapeManager.getInstance());
         managerThread.start();
+    }
+
+    private static void createDirectories() throws IOException {
+        if(Files.notExists(Paths.get("log")))
+            Files.createDirectory(Paths.get("log"));
+        if(Files.notExists(Paths.get("temp")))
+            Files.createDirectory(Paths.get("temp"));
+        if(Files.notExists(Paths.get("results")))
+            Files.createDirectory(Paths.get("results"));
     }
 }

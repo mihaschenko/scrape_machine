@@ -1,6 +1,6 @@
 package com.scraperservice.manager;
 
-import com.scraperservice.scraper.helper.LogHelper;
+import com.scraperservice.helper.LogHelper;
 import com.scraperservice.storage.DataArray;
 import com.scraperservice.storage.writer.ScraperDataWriter;
 

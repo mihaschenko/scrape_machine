@@ -18,5 +18,3 @@ UniversalScraper.iml
 *.html
 *TillConnection.java
 *TillConnectionTimer.java
-*.s3db
-*.s3db-journal

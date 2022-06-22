@@ -1,7 +1,7 @@
 package com.scraperservice;
 
 import com.scraperservice.connection.setting.ConnectionProperties;
-import com.scraperservice.scraper.helper.LogHelper;
+import com.scraperservice.helper.LogHelper;
 import com.scraperservice.manager.StatisticManager;
 import com.scraperservice.scraper.Scraper;
 import com.scraperservice.scraper.page.PageData;

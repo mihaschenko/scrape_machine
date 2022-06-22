@@ -2,7 +2,7 @@ package com.scraperservice.connection;
 
 import com.scraperservice.ChromeDriverFactory;
 import com.scraperservice.connection.setting.ConnectionProperties;
-import com.scraperservice.scraper.helper.LogHelper;
+import com.scraperservice.helper.LogHelper;
 import com.scraperservice.utils.WebDriverUtil;
 import lombok.Data;
 import org.jsoup.Jsoup;
@@ -54,7 +54,7 @@ public class SeleniumConnection extends Connection {
         catch (Exception ignore) {}
 
         if(setting.getEvents().size() > 0)
-            setting.getEvents().forEach(connectionEvent -> connectionEvent.event(driver));
+            setting.getEvents().forEach(connectionEvent -> connectionEvent.event(driver, url));
 
         if(setting.getDelay() > 0) {
             try {

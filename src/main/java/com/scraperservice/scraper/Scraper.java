@@ -17,14 +17,4 @@ public abstract class Scraper {
     public abstract List<String> scrapeLinksToProductPages(PageData pageData);
     public abstract String goToNextPage(PageData pageData);
     public ConnectionProperties getDefaultConnectionProperties() { return new ConnectionProperties(); }
-
-    protected static PageType initPageType(Document document,
-                                           String categoryCssSelector, String productPageCssSelector) {
-        if(document.selectFirst(productPageCssSelector) != null)
-            return PageType.PRODUCT_PAGE;
-        else if(document.selectFirst(categoryCssSelector) != null)
-            return PageType.CATEGORY_PAGE;
-        else
-            return PageType.UNDEFINED;
-    }
 }

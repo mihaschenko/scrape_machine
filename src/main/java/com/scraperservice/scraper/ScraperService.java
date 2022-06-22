@@ -7,7 +7,7 @@ import com.scraperservice.storage.DataCell;
 import com.scraperservice.utils.RegexUtil;
 import com.scraperservice.utils.ScrapeUtil;
 import com.scraperservice.utils.TableUtil;
-import com.scraperservice.web.entity.Config;
+import com.web.entity.Config;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;

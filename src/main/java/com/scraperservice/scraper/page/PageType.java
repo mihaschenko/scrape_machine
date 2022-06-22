@@ -13,4 +13,6 @@ public enum PageType {
     public boolean isCategory() {
         return this == CATEGORY_PAGE || this == CATEGORY_AND_PRODUCT_PAGE;
     }
+
+    public boolean isUndefined() { return this == UNDEFINED; }
 }

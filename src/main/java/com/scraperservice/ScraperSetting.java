@@ -2,7 +2,7 @@ package com.scraperservice;
 
 import com.scraperservice.connection.Connection;
 import com.scraperservice.connection.JsoupConnection;
-import com.scraperservice.scraper.helper.ConsoleHelper;
+import com.scraperservice.helper.ConsoleHelper;
 import com.scraperservice.scraper.Scraper;
 import lombok.Data;
 import org.reflections.Reflections;

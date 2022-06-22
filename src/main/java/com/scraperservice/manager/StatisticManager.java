@@ -13,6 +13,8 @@ public class StatisticManager {
 
     public static StatisticManager getInstance() { return statisticManager; }
 
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yyyy");
+
     private final AtomicInteger linkAmountCounter;
     private final AtomicInteger productSuccessCounter;
     private final AtomicInteger productFailCounter;
@@ -93,7 +95,6 @@ public class StatisticManager {
     @Override
     public String toString() {
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yyyy");
 
         StringBuilder result = new StringBuilder("STATISTIC (" + dateFormat.format(date) + "):").append("\n");
         int linkAmountCounter = this.linkAmountCounter.get();
@@ -116,22 +117,14 @@ public class StatisticManager {
 
         if(emptyImportantData.size() > 0) {
             result.append("\nEmpty IMPORTANT fields (% of unsuccess):");
-            for(Map.Entry<String, Integer> data : emptyImportantData.entrySet()) {
-                result.append("\n\t").append(data.getKey()).append(" - ").append(data.getValue())
-                        .append(" (")
-                        .append(String.format("%.1f", data.getValue() / ((double) productFailCounter / 100)))
-                        .append("%)");
-            }
+            for(Map.Entry<String, Integer> data : emptyImportantData.entrySet())
+                result.append("\n\t").append(data.getKey()).append(" - ").append(data.getValue());
             result.append("\n");
         }
         if(emptyNotImportantData.size() > 0) {
             result.append("\nEmpty NOT IMPORTANT fields (% of success):");
-            for(Map.Entry<String, Integer> data : emptyNotImportantData.entrySet()) {
-                result.append("\n\t").append(data.getKey()).append(" - ").append(data.getValue())
-                        .append(" (")
-                        .append(String.format("%.1f", data.getValue() / ((double) productSuccessCounter / 100)))
-                        .append("%)");
-            }
+            for(Map.Entry<String, Integer> data : emptyNotImportantData.entrySet())
+                result.append("\n\t").append(data.getKey()).append(" - ").append(data.getValue());
             result.append("\n");
         }
 

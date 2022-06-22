@@ -15,7 +15,7 @@ public class MoveUntilEndPageClickEvent implements ConnectionEvent {
     }
 
     @Override
-    public void event(WebDriver webDriver) {
+    public void event(WebDriver webDriver, String url) {
         try{
             Document document = Jsoup.parse(webDriver.getPageSource());
             if(document.selectFirst(cssSelector) != null)

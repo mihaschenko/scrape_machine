@@ -1,5 +1,6 @@
 package com.scraperservice.utils;
 
+import com.scraperservice.scraper.page.PageType;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -228,6 +229,16 @@ public class ScrapeUtil {
             return url + "&" + parameterName + "=2";
         else
             return url + "?" + parameterName + "=2";
+    }
+
+    protected static PageType initPageType(Document document,
+                                           String categoryCssSelector, String productPageCssSelector) {
+        if(document.selectFirst(productPageCssSelector) != null)
+            return PageType.PRODUCT_PAGE;
+        else if(document.selectFirst(categoryCssSelector) != null)
+            return PageType.CATEGORY_PAGE;
+        else
+            return PageType.UNDEFINED;
     }
 
     private ScrapeUtil() {}

@@ -1,7 +1,7 @@
 package com.scraperservice.connection;
 
 import com.scraperservice.connection.setting.ConnectionProperties;
-import com.scraperservice.scraper.helper.SSLHelper;
+import com.scraperservice.helper.SSLHelper;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
