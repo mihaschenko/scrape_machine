@@ -18,3 +18,4 @@ UniversalScraper.iml
 *.html
 *TillConnection.java
 *TillConnectionTimer.java
+*hibernate.cfg.xml
