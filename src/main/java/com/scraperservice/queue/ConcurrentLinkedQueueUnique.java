@@ -1,13 +1,16 @@
 package com.scraperservice.queue;
 
+import com.scraperservice.helper.LogHelper;
+
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 
 public class ConcurrentLinkedQueueUnique implements AutoCloseable {
     private final UniqueValuesStorage uniqueValuesStorage;
-    private final AtomicInteger size = new AtomicInteger(0);
-    private final AtomicInteger currentPosition = new AtomicInteger(0);
+    private final AtomicInteger size = new AtomicInteger(1);
+    private final AtomicInteger currentPosition = new AtomicInteger(1);
 
     public ConcurrentLinkedQueueUnique() throws SQLException {
         uniqueValuesStorage = new UniqueValuesStorage();
@@ -31,7 +34,7 @@ public class ConcurrentLinkedQueueUnique implements AutoCloseable {
         try{
             result = uniqueValuesStorage.add(size.get(), s);
         }
-        catch (SQLException e) { /*LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);*/ }
+        catch (SQLException e) { LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e); }
         if(result)
             size.incrementAndGet();
         return result;
@@ -42,7 +45,7 @@ public class ConcurrentLinkedQueueUnique implements AutoCloseable {
             try{
                 return uniqueValuesStorage.get(currentPosition.getAndIncrement()).intern();
             }
-            catch (SQLException e) { /*LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);*/ }
+            catch (SQLException e) { LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e); }
         }
         return null;
     }

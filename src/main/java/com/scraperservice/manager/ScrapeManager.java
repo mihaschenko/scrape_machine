@@ -85,9 +85,9 @@ public class ScrapeManager implements Runnable {
                             connectionPool.release(connection);
                         }
                     }
-                    catch (InterruptedException e) { Thread.currentThread().interrupt(); throw new RuntimeException(e); }
-                    catch (Exception e) { throw new RuntimeException(e); }
-                }, taskPool);
+                    catch (InterruptedException e) { e.printStackTrace(); Thread.currentThread().interrupt(); throw new RuntimeException(e); }
+                    catch (Exception e) { e.printStackTrace(); throw new RuntimeException(e); }
+                }, taskPool).whenComplete(this::logException);
 
                 CompletableFuture<PageData> categoryCompletableFuture = pageDataFuture.thenApplyAsync(pageData -> {
                     // Scrape category links

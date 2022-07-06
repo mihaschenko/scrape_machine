@@ -12,7 +12,7 @@ import java.util.logging.Level;
 public class UniqueValuesStorage implements AutoCloseable {
     private final String tableIndex;
     private final Connection connection;
-    private Statement statement;
+    private final Statement statement;
 
     public UniqueValuesStorage() throws SQLException {
         connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/uniqueLinkValues.s3db");
