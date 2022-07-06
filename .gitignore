@@ -7,6 +7,7 @@ out
 reports
 target
 results
+*hibernate.cfg.xml
 UniversalScraper.iml
 *.txt
 *.csv
@@ -16,6 +17,4 @@ UniversalScraper.iml
 !**/Scraper.java
 *.json
 *.html
-*TillConnection.java
-*TillConnectionTimer.java
-*hibernate.cfg.xml
+*/captcha.properties
