@@ -5,7 +5,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TableUtil {
     /**
@@ -87,14 +86,29 @@ public class TableUtil {
      * @return json строка или пустая строка, если элемент не является таблицей или
      * таблица не корректна
      */
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     public static String topHeadTable(Element table) {
         String[][] matrix = getMatrix(table);
         if(matrix != null) {
             SimpleJsonString json = new SimpleJsonString();
             for(int i = 1; i < matrix.length; i++) {
                 json.openLevel(Integer.toString(i-1));
-                for(int j = 0; j < matrix[i].length; j++)
-                    json.writeNewItem(matrix[0][j], matrix[i][j]);
+                boolean isArrayOpen = false;
+                for(int j = 0; j < matrix[i].length; j++) {
+                    if(j+1 < matrix[i].length && matrix[0][j+1].equals(matrix[0][j]) && !isArrayOpen) {
+                        isArrayOpen = true;
+                        json.openArray(matrix[0][j]);
+                    }
+                    if(!isArrayOpen)
+                        json.writeNewItem(matrix[0][j], matrix[i][j]);
+                    else
+                        json.writeNewItem(matrix[i][j]);
+                    if((j+1 >= matrix[i].length && isArrayOpen)
+                            || (j+1 < matrix[i].length && !matrix[0][j+1].equals(matrix[0][j]) && isArrayOpen)) {
+                        isArrayOpen = false;
+                        json.closeArray();
+                    }
+                }
                 json.closeLevel();
             }
             return json.toString();
@@ -243,6 +257,40 @@ public class TableUtil {
     }
 
     /**
+     * Таблица преобразуется в json строки. Заголовок находится слева.
+     * Теги 'thead' и 'tbody' игнорируются
+     * @param table таблица. Если элемент не является таблицей - возвращается пустой Map
+     * @param keyName имя столбца, значения которого будут ключами
+     * @return Map, в котором ключами будут значения в столбце с заголовком равном значению
+     * переменной keyName, а значение - строка с данными, которые соответствуют ключу
+     */
+    public static Map<String, String> leftHeadTableRowsByKey(Element table, String keyName) {
+        String[][] matrix = getMatrix(table);
+        Map<String, String> result = new TreeMap<>();
+        if(matrix != null) {
+            int keyIndex = -1;
+            for(int i = 0; i < matrix.length; i++) {
+                if(matrix[i][0].equals(keyName)) {
+                    keyIndex = i;
+                    break;
+                }
+            }
+
+            if(keyIndex >= 0) {
+                for(int i = 1; i < matrix[0].length; i++) {
+                    if(matrix[keyIndex][i].trim().isEmpty())
+                        continue;
+                    SimpleJsonString json = new SimpleJsonString();
+                    for(int j = 0; j < matrix.length; j++)
+                        json.writeNewItem(matrix[j][0], matrix[j][i]);
+                    result.put(matrix[keyIndex][i], json.toString());
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Таблицы преобразуется в json строку. Заголовок находится слева.
      * Теги 'thead' и 'tbody' игнорируются. Каждая таблица будет преобразована в отдельную json строку
      * @param tables таблицы. Если элемент не является таблицей - возвращается пустая строка
@@ -303,7 +351,7 @@ public class TableUtil {
             SimpleJsonString result = new SimpleJsonString();
             for(Element row : rows) {
                 List<String> data = ScrapeUtil.getTexts(row, cellSelector);
-                if(data.size() == 2)
+                if(data.size() == 2 && !data.get(0).isEmpty())
                     result.writeNewItem(data.get(0), data.get(1));
             }
             return result.toString();
@@ -417,5 +465,14 @@ public class TableUtil {
                 matrix[i][j] = value;
             }
         }
+    }
+
+    private static String[][] rotate90(String[][] matrix) {
+        String[][] result = new String[matrix[0].length][matrix.length];
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++)
+                result[j][matrix.length-i-1] = matrix[i][j];
+        }
+        return result;
     }
 }
