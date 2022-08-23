@@ -1,6 +1,7 @@
 package com.scraperservice.queue;
 
 import com.scraperservice.helper.LogHelper;
+import org.sqlite.SQLiteException;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -34,7 +35,7 @@ public class ConcurrentLinkedQueueUnique implements AutoCloseable {
         try{
             result = uniqueValuesStorage.add(size.get(), s);
         }
-        catch (SQLException e) { LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e); }
+        catch (SQLException e) { /*LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);*/ }
         if(result)
             size.incrementAndGet();
         return result;

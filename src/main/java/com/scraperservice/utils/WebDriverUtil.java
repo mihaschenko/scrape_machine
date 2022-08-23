@@ -9,9 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 public class WebDriverUtil {
@@ -348,6 +346,12 @@ public class WebDriverUtil {
                     clickOnElementJavaScript(driver, variants[i][j]);
             }
         }
+    }
+
+    public static Map<String, String> webDriverCookieToMap(Set<Cookie> cookieSet) {
+        Map<String, String> result = new HashMap<>();
+        cookieSet.forEach(cookie -> result.put(cookie.getName(), cookie.getValue()));
+        return result;
     }
 
     private WebDriverUtil() {}

@@ -1,9 +1,11 @@
 package com.scraperservice.utils;
 
 import com.scraperservice.scraper.page.PageType;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -239,6 +241,16 @@ public class ScrapeUtil {
             return PageType.CATEGORY_PAGE;
         else
             return PageType.UNDEFINED;
+    }
+
+    public static String getBaseSiteUrl(String url) {
+        return RegexUtil.findText("http(s|):\\/\\/[^\\/]+", url);
+    }
+
+    public static Document getDocument(ChromeDriver driver) {
+        Document document = Jsoup.parse(driver.getPageSource());
+        document.setBaseUri(ScrapeUtil.getBaseSiteUrl(driver.getCurrentUrl()));
+        return document;
     }
 
     private ScrapeUtil() {}

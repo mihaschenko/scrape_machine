@@ -1,7 +1,10 @@
 package com.scraperservice.connection;
 
+import com.scraperservice.captcha.CaptchaResult;
+import com.scraperservice.captcha.CaptchaStatus;
 import com.scraperservice.connection.setting.ConnectionProperties;
 import com.scraperservice.helper.SSLHelper;
+import com.scraperservice.scraper.page.PageData;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
@@ -9,7 +12,46 @@ import java.io.IOException;
 public class JsoupConnection extends Connection {
     @Override
     public Document getPage(String url, ConnectionProperties setting) throws IOException {
-        org.jsoup.Connection connection = SSLHelper.getConnection(url);
+        PageData pageData = new PageData();
+        pageData.setUrl(url);
+        getPage(pageData, setting);
+        return pageData.getHtml();
+    }
+
+    @Override
+    public void getPage(PageData pageData, ConnectionProperties connectionProperties) throws IOException {
+        org.jsoup.Connection connection = createConnection(pageData, connectionProperties);
+        org.jsoup.Connection.Response response = connection.execute();
+        pageData.setCookies(response.cookies());
+
+        connection = createConnection(pageData, connectionProperties)
+                .cookies(pageData.getCookies());
+        Document result = connectionProperties.getMethod() == ConnectionProperties.Method.GET ?
+                connection.get() : connection.post();
+
+        for(int i = 0; i < 3; i++) {
+            if(connectionProperties.getCaptchaServer() != null) {
+                CaptchaResult captchaResult = connectionProperties.getCaptchaServer().solve(null, result, pageData.getCookies());
+                if(connectionProperties.getCaptchaSolver() != null) {
+                    if(captchaResult.key != null) {
+                        result = connectionProperties.getCaptchaSolver().solve(null, pageData.getUrl(), captchaResult, pageData.getCookies());
+                        if(!connectionProperties.getCaptchaServer().isPageHaveCaptcha(result))
+                            break;
+                    }
+                }
+                else
+                    break;
+            }
+            else
+                break;
+        }
+
+        delay(connectionProperties);
+        pageData.setHtml(result);
+    }
+
+    private org.jsoup.Connection createConnection(PageData pageData, ConnectionProperties connectionProperties) {
+        org.jsoup.Connection connection = SSLHelper.getConnection(pageData.getUrl());
 
         connection = connection.userAgent(RandomUserAgent.getRandomUserAgent())
                 .header("Accept-Language", "en-US")
@@ -17,19 +59,15 @@ public class JsoupConnection extends Connection {
                 .ignoreContentType(true)
                 .ignoreHttpErrors(true);
 
-        if(setting.getCookie() != null && setting.getCookie().size() > 0)
-            connection = connection.cookies(setting.getCookie());
-        if(setting.getData() != null && setting.getData().size() > 0)
-            connection = connection.data(setting.getData());
+        if(connectionProperties.getCookie() != null && connectionProperties.getCookie().size() > 0)
+            connection = connection.cookies(connectionProperties.getCookie());
+        if(connectionProperties.getData() != null && connectionProperties.getData().size() > 0)
+            connection = connection.data(connectionProperties.getData());
 
         connection.timeout(0);
 
-        Document result = setting.getMethod() == ConnectionProperties.Method.GET ? connection.get() : connection.post();
-        if(setting.getDelay() > 0) {
-            try{ Thread.sleep(setting.getDelay()); }
-            catch (InterruptedException e) { Thread.currentThread().interrupt(); }
-        }
-        return result;
+        return connectionProperties.getMethod() == ConnectionProperties.Method.GET ?
+                connection.method(org.jsoup.Connection.Method.GET) : connection.method(org.jsoup.Connection.Method.POST);
     }
 
     @Override

@@ -6,15 +6,19 @@ import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
 import org.jsoup.nodes.Document;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public abstract class Scraper {
-    public abstract List<DataArray> scrapeData(PageData pageData);
+    private static final ConnectionProperties CONNECTION_PROPERTIES = new ConnectionProperties();
+
+    public abstract Collection<DataArray> scrapeData(PageData pageData);
     public abstract PageType getPageType(PageData pageData);
-    public abstract List<String> getStartLinks();
-    public abstract List<String> scrapeCategories(PageData pageData);
-    public abstract List<String> scrapeSubCategories(PageData pageData);
-    public abstract List<String> scrapeLinksToProductPages(PageData pageData);
+    public abstract Collection<String> getStartLinks();
+    public abstract Collection<String> scrapeCategories(PageData pageData);
+    public abstract Collection<String> scrapeSubCategories(PageData pageData);
+    public abstract Collection<String> scrapeLinksToProductPages(PageData pageData);
     public abstract String goToNextPage(PageData pageData);
-    public ConnectionProperties getDefaultConnectionProperties() { return new ConnectionProperties(); }
+    public ConnectionProperties getDefaultConnectionProperties() { return CONNECTION_PROPERTIES; }
 }

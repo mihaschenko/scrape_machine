@@ -17,7 +17,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
@@ -74,7 +75,7 @@ public class ScrapeManager implements Runnable {
                         PageData pageData = new PageData(link);
                         Connection connection = connectionPool.acquire();
                         try{
-                            pageData.setHtml(connection.getPage(link, scraper.getDefaultConnectionProperties()));
+                            connection.getPage(pageData, scraper.getDefaultConnectionProperties());
                             pageData.setPageType(scraper.getPageType(pageData));
 
                             if(pageData.getPageType() == PageType.UNDEFINED)
@@ -92,9 +93,9 @@ public class ScrapeManager implements Runnable {
                 CompletableFuture<PageData> categoryCompletableFuture = pageDataFuture.thenApplyAsync(pageData -> {
                     // Scrape category links
                     if(pageData.getPageType().isCategory()) {
-                        List<String> category = scraper.scrapeCategories(pageData);
-                        List<String> subCategory = scraper.scrapeSubCategories(pageData);
-                        List<String> products = scraper.scrapeLinksToProductPages(pageData);
+                        Collection<String> category = scraper.scrapeCategories(pageData);
+                        Collection<String> subCategory = scraper.scrapeSubCategories(pageData);
+                        Collection<String> products = scraper.scrapeLinksToProductPages(pageData);
                         boolean isPageHasLinks = false;
                         if (category != null && category.size() > 0) {
                             linksQueue.addAll(category);
@@ -133,7 +134,7 @@ public class ScrapeManager implements Runnable {
                     // scrape product's data
                     if(pageData.getPageType().isProduct()) {
                         try {
-                            List<DataArray> result = scraper.scrapeData(pageData);
+                            Collection<DataArray> result = scraper.scrapeData(pageData);
                             pageData.setProducts(result.size());
                             dataSaveManager.save(result
                                     .stream().filter(DataArray::checkAllNecessaryCells).collect(Collectors.toList()));

@@ -1670,4 +1670,9 @@ public class RandomUserAgent {
 		String[] userAgents = uaMap.get(browser);
 		return userAgents[(int) Math.floor(ThreadLocalRandom.current().nextDouble() * userAgents.length)];
 	}
+
+	public static String getRandomUserAgentChrome() {
+		String[] userAgents = uaMap.get("Chrome");
+		return userAgents[(int) Math.floor(ThreadLocalRandom.current().nextDouble() * userAgents.length)];
+	}
 }

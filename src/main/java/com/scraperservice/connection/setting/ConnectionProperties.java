@@ -1,6 +1,8 @@
 package com.scraperservice.connection.setting;
 
-import lombok.Data;
+import com.scraperservice.captcha.CaptchaServer;
+import com.scraperservice.captcha.CaptchaSolver;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +20,9 @@ public class ConnectionProperties {
     private List<String> waitForIt;
     private List<ConnectionEvent> events;
     private int delay;
+    private RandomDelay randomDelay;
+    private CaptchaServer captchaServer;
+    private CaptchaSolver captchaSolver;
 
     public ConnectionProperties() {
         method = Method.GET;
@@ -26,6 +31,9 @@ public class ConnectionProperties {
         waitForIt = new ArrayList<>();
         events = new ArrayList<>();
         delay = 0;
+        randomDelay = null;
+        captchaServer = null;
+        captchaSolver = null;
     }
 
     public ConnectionProperties(ConnectionProperties connectionProperties) {
@@ -37,6 +45,21 @@ public class ConnectionProperties {
         waitForIt = connectionProperties.waitForIt;
         events = connectionProperties.events;
         delay = connectionProperties.delay;
+        randomDelay = connectionProperties.randomDelay;
+        captchaServer = connectionProperties.captchaServer;
+        captchaSolver = connectionProperties.captchaSolver;
+    }
+
+    public static class RandomDelay {
+        public final int from;
+        public final int to;
+
+        public RandomDelay(int from, int to) {
+            if(to < from || from < 0)
+                throw new IllegalArgumentException(String.format("from = %d, to = %d", from, to));
+            this.from = from;
+            this.to = to;
+        }
     }
 
     public enum Method {

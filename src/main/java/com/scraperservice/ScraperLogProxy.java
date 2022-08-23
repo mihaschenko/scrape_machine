@@ -7,9 +7,15 @@ import com.scraperservice.scraper.Scraper;
 import com.scraperservice.scraper.page.PageData;
 import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
+import org.apache.taglibs.standard.lang.jstl.BinaryOperator;
 
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ScraperLogProxy extends Scraper {
     private final Scraper scraper;

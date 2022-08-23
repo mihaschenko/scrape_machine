@@ -3,6 +3,8 @@ package com.scraperservice.scraper.page;
 import lombok.Data;
 import org.jsoup.nodes.Document;
 
+import java.util.Map;
+
 @Data
 public class PageData {
     public PageData() {}
@@ -18,6 +20,7 @@ public class PageData {
     private String url;
     private PageType pageType;
     private Document html;
+    private Map<String, String> cookies;
     private int categoryLinks = 0;
     private int subcategoryLinks = 0;
     private int productLinks = 0;
