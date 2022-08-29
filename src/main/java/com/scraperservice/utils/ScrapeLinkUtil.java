@@ -2,6 +2,7 @@ package com.scraperservice.utils;
 
 import org.jsoup.nodes.Element;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +14,7 @@ public class ScrapeLinkUtil {
         return scrapeAttributeWithLink(document, cssSelector, baseSiteUrl, "href");
     }
 
-    public static List<String> scrapeLinks(Element document, String cssSelector, String baseSiteUrl) {
+    public static Collection<String> scrapeLinks(Element document, String cssSelector, String baseSiteUrl) {
         return scrapeAttributesWithLink(document, cssSelector, baseSiteUrl, "href");
     }
 
@@ -21,23 +22,23 @@ public class ScrapeLinkUtil {
         return scrapeAttributeWithLink(document, cssSelector, baseSiteUrl, "src");
     }
 
-    public static List<String> scrapeImages(Element document, String cssSelector, String baseSiteUrl) {
+    public static Collection<String> scrapeImages(Element document, String cssSelector, String baseSiteUrl) {
         return scrapeAttributesWithLink(document, cssSelector, baseSiteUrl, "src");
     }
 
-    public static List<String> scrapeImagesWithCache(List<String> imagesWithReplaceableCache, List<String> imagesWithReplacementCache) {
+    public static Collection<String> scrapeImagesWithCache(List<String> imagesWithReplaceableCache, List<String> imagesWithReplacementCache) {
         if(imagesWithReplaceableCache.size() == 0)
             return imagesWithReplacementCache;
         else if(imagesWithReplacementCache.size() > 0)
             return changeLinkCache(imagesWithReplaceableCache, parseCache(imagesWithReplacementCache.get(0)));
         else
-            return Collections.emptyList();
+            return Collections.emptySet();
     }
 
-    private static List<String> scrapeAttributesWithLink(Element document, String cssSelector, String baseSiteUrl, String attribute) {
+    private static Collection<String> scrapeAttributesWithLink(Element document, String cssSelector, String baseSiteUrl, String attribute) {
         return ScrapeUtil.getAttributes(document, cssSelector, attribute)
                 .stream().distinct().map(link -> ScrapeUtil.joinBaseUrlAndLink(baseSiteUrl, link))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     private static String scrapeAttributeWithLink(Element document, String cssSelector, String baseSiteUrl, String attribute) {

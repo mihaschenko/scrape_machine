@@ -74,7 +74,7 @@ public class StatisticManager {
         emptyNotImportantData.compute(dataName, (k, v) -> v == null ? amount : v+amount);
     }
 
-    public void recordProductDataStatistic(List<DataArray> dataArraysList) {
+    public void recordProductDataStatistic(Collection<DataArray> dataArraysList) {
         if(dataArraysList != null && dataArraysList.size() > 0) {
             for(DataArray dataArray : dataArraysList) {
                 if(dataArray.checkAllNecessaryCells())

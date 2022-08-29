@@ -2,22 +2,23 @@ package com.scraperservice.context;
 
 import com.scraperservice.ScraperLogProxy;
 import com.scraperservice.ScraperSetting;
+import com.scraperservice.UniqueValuesStorage;
 import com.scraperservice.connection.Connection;
 import com.scraperservice.connection.JsoupConnection;
 import com.scraperservice.connection.SeleniumConnection;
 import com.scraperservice.connection.ConnectionPool;
 import com.scraperservice.manager.DataSaveManager;
-import com.scraperservice.queue.ConcurrentLinkedQueueUnique;
 import com.scraperservice.scraper.Scraper;
 import com.scraperservice.storage.writer.CSVDataWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Configuration
 @ComponentScan(value = "com.scraperservice")
@@ -35,9 +36,15 @@ public class ScraperContext {
         return new ScraperLogProxy(scraperSetting.getScraper());
     }
 
+    @Bean("blockingQueue")
+    public BlockingQueue<Runnable> blockingQueue() {
+        return new LinkedBlockingDeque<>(20);
+    }
+
     @Bean
-    public ExecutorService executorService(@Value("${scraper.manager.task.pool}") int taskPoolSize) {
-        return Executors.newFixedThreadPool(taskPoolSize);
+    public ExecutorService executorService(@Value("${scraper.manager.task.pool}") int taskPoolSize,
+                                           @Qualifier("blockingQueue") BlockingQueue<Runnable> runnableBlockingQueue) {
+        return new ThreadPoolExecutor(taskPoolSize, taskPoolSize, 0L, TimeUnit.MILLISECONDS, runnableBlockingQueue);
     }
 
     @Bean
@@ -58,11 +65,11 @@ public class ScraperContext {
 
     @Bean
     @Primary
-    public ConcurrentLinkedQueueUnique concurrentLinkedQueueUnique(ScraperSetting scraperSetting) throws SQLException {
-        ConcurrentLinkedQueueUnique concurrentLinkedQueueUnique = new ConcurrentLinkedQueueUnique();
+    public UniqueValuesStorage uniqueValuesStorage(ScraperSetting scraperSetting) throws SQLException {
+        UniqueValuesStorage uniqueValuesStorage = new UniqueValuesStorage();
         if(scraperSetting.getStartLinks() != null)
-            concurrentLinkedQueueUnique.addAll(scraperSetting.getStartLinks());
-        return concurrentLinkedQueueUnique;
+            uniqueValuesStorage.addAll(scraperSetting.getStartLinks());
+        return uniqueValuesStorage;
     }
 
     @Bean

@@ -11,6 +11,7 @@ import com.scraperservice.utils.ScrapeUtil;
 import com.scraperservice.utils.TableUtil;
 import org.jsoup.nodes.Document;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class ScraperExample extends Scraper {
     private static final String SPECIFICATION_SELECTOR = "table.specification";
 
     @Override
-    public List<DataArray> scrapeData(PageData pageData) {
+    public Collection<DataArray> scrapeData(PageData pageData) {
         Document document = pageData.getHtml();
         DataArray dataArray = new DataArray(pageData.getUrl());
         dataArray.add(new DataCell("name", ScrapeUtil.getText(document, NAME_SELECTOR)));
@@ -63,17 +64,17 @@ public class ScraperExample extends Scraper {
     }
 
     @Override
-    public List<String> scrapeCategories(PageData pageData) {
+    public Collection<String> scrapeCategories(PageData pageData) {
         return ScrapeLinkUtil.scrapeLinks(pageData.getHtml(), CATEGORY_SELECTOR, BASE_SITE_URL);
     }
 
     @Override
-    public List<String> scrapeSubCategories(PageData pageData) {
+    public Collection<String> scrapeSubCategories(PageData pageData) {
         return ScrapeLinkUtil.scrapeLinks(pageData.getHtml(), SUBCATEGORY_SELECTOR, BASE_SITE_URL);
     }
 
     @Override
-    public List<String> scrapeLinksToProductPages(PageData pageData) {
+    public Collection<String> scrapeLinksToProductPages(PageData pageData) {
         return ScrapeLinkUtil.scrapeLinks(pageData.getHtml(), PRODUCT_SELECTOR, BASE_SITE_URL);
     }
 

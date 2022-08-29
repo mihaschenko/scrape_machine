@@ -41,7 +41,10 @@ public class UniqueValuesStorage implements AutoCloseable {
             ResultSet resultSet = statement.executeQuery(sql);
             return !resultSet.next();
         }
-        catch (SQLException e) { throw new RuntimeException(e); }
+        catch (SQLException e) {
+            LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            return true;
+        }
     }
 
     public boolean addAll(Collection<String> collection) {
@@ -59,7 +62,10 @@ public class UniqueValuesStorage implements AutoCloseable {
             index++;
             return statement.executeUpdate(sql) != 0;
         }
-        catch (SQLException e) { throw new RuntimeException(e); }
+        catch (SQLException e) {
+            LogHelper.getLogger().log(Level.WARNING, e.getMessage(), e);
+            return false;
+        }
     }
 
     public synchronized String get(int id) {
@@ -70,7 +76,10 @@ public class UniqueValuesStorage implements AutoCloseable {
                 return resultSet.getString("link");
             return null;
         }
-        catch (SQLException e) { throw new RuntimeException(e); }
+        catch (SQLException e) {
+            LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            return null;
+        }
     }
 
     public synchronized String poll() {
@@ -85,7 +94,10 @@ public class UniqueValuesStorage implements AutoCloseable {
             }
             return null;
         }
-        catch (SQLException e) { throw new RuntimeException(e); }
+        catch (SQLException e) {
+            LogHelper.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            return null;
+        }
     }
 
     // Only for test

@@ -7,15 +7,9 @@ import com.scraperservice.scraper.Scraper;
 import com.scraperservice.scraper.page.PageData;
 import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
-import org.apache.taglibs.standard.lang.jstl.BinaryOperator;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ScraperLogProxy extends Scraper {
     private final Scraper scraper;
@@ -29,8 +23,8 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public List<DataArray> scrapeData(PageData pageData) {
-        List<DataArray> result = scraper.scrapeData(pageData);
+    public Collection<DataArray> scrapeData(PageData pageData) {
+        Collection<DataArray> result = scraper.scrapeData(pageData);
         statisticManager.recordProductDataStatistic(result);
         //logger.log(Level.FINEST, "scrape product data (" + (result != null ? result.size() : 0) + ")");
         return result;
@@ -45,31 +39,31 @@ public class ScraperLogProxy extends Scraper {
     }
 
     @Override
-    public List<String> getStartLinks() {
-        List<String> result = scraper.getStartLinks();
+    public Collection<String> getStartLinks() {
+        Collection<String> result = scraper.getStartLinks();
         statisticManager.addLinkAmountCounter((result != null ? result.size() : 0));
         return result;
     }
 
     @Override
-    public List<String> scrapeCategories(PageData pageData) {
-        List<String> result = scraper.scrapeCategories(pageData);
+    public Collection<String> scrapeCategories(PageData pageData) {
+        Collection<String> result = scraper.scrapeCategories(pageData);
         statisticManager.addLinkAmountCounter(result != null ? result.size() : 0);
         //logger.log(Level.FINEST, "scrape categories (" + (result != null ? result.size() : 0) + ")");
         return result;
     }
 
     @Override
-    public List<String> scrapeSubCategories(PageData pageData) {
-        List<String> result = scraper.scrapeSubCategories(pageData);
+    public Collection<String> scrapeSubCategories(PageData pageData) {
+        Collection<String> result = scraper.scrapeSubCategories(pageData);
         statisticManager.addLinkAmountCounter(result != null ? result.size() : 0);
         //logger.log(Level.FINEST, "scrape subcategories (" + (result != null ? result.size() : 0) + ")");
         return result;
     }
 
     @Override
-    public List<String> scrapeLinksToProductPages(PageData pageData) {
-        List<String> result = scraper.scrapeLinksToProductPages(pageData);
+    public Collection<String> scrapeLinksToProductPages(PageData pageData) {
+        Collection<String> result = scraper.scrapeLinksToProductPages(pageData);
         statisticManager.addLinkAmountCounter(result != null ? result.size() : 0);
         //logger.log(Level.FINEST, "scrape product pages (" + (result != null ? result.size() : 0) + ")");
         return result;
