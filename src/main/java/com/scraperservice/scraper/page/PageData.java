@@ -20,7 +20,6 @@ public class PageData {
     private String url;
     private PageType pageType;
     private Document html;
-    private Map<String, String> cookies;
     private int categoryLinks = 0;
     private int subcategoryLinks = 0;
     private int productLinks = 0;

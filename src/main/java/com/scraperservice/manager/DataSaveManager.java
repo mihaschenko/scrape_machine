@@ -4,6 +4,7 @@ import com.scraperservice.helper.LogHelper;
 import com.scraperservice.storage.DataArray;
 import com.scraperservice.storage.writer.ScraperDataWriter;
 
+import javax.annotation.PreDestroy;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashSet;

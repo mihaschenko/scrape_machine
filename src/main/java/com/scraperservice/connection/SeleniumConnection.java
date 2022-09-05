@@ -70,7 +70,6 @@ public class SeleniumConnection extends Connection {
 
         Map<String, String> cookies = new HashMap<>();
         driver.manage().getCookies().forEach(cookie -> cookies.put(cookie.getName(), cookie.getValue()));
-        pageData.setCookies(cookies);
 
         waitForElements(connectionProperties);
         if(solveCaptcha(driver, pageData.getUrl(), connectionProperties, cookies))

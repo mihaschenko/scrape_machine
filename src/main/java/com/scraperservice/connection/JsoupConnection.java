@@ -22,19 +22,18 @@ public class JsoupConnection extends Connection {
     public void getPage(PageData pageData, ConnectionProperties connectionProperties) throws IOException {
         org.jsoup.Connection connection = createConnection(pageData, connectionProperties);
         org.jsoup.Connection.Response response = connection.execute();
-        pageData.setCookies(response.cookies());
 
         connection = createConnection(pageData, connectionProperties)
-                .cookies(pageData.getCookies());
+                .cookies(response.cookies());
         Document result = connectionProperties.getMethod() == ConnectionProperties.Method.GET ?
                 connection.get() : connection.post();
 
         for(int i = 0; i < 3; i++) {
             if(connectionProperties.getCaptchaServer() != null) {
-                CaptchaResult captchaResult = connectionProperties.getCaptchaServer().solve(null, result, pageData.getCookies());
+                CaptchaResult captchaResult = connectionProperties.getCaptchaServer().solve(null, result, response.cookies());
                 if(connectionProperties.getCaptchaSolver() != null) {
                     if(captchaResult.key != null) {
-                        result = connectionProperties.getCaptchaSolver().solve(null, pageData.getUrl(), captchaResult, pageData.getCookies());
+                        result = connectionProperties.getCaptchaSolver().solve(null, pageData.getUrl(), captchaResult, response.cookies());
                         if(!connectionProperties.getCaptchaServer().isPageHaveCaptcha(result))
                             break;
                     }

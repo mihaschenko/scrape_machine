@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;
 
-public class ConnectionPool implements ObjectPool<Connection>, Closeable {
+public class ConnectionPool implements ObjectPool<Connection>, AutoCloseable {
     private final ArrayBlockingQueue<Connection> pool;
 
     public ConnectionPool(int poolSize, Class<? extends Connection> connectionClass)

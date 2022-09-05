@@ -32,7 +32,8 @@ public class ScraperContext {
     }
 
     @Bean
-    public Scraper scraper(ScraperSetting scraperSetting) {
+    public Scraper scraper(ScraperSetting scraperSetting, ConnectionPool connectionPool) {
+        scraperSetting.getScraper().setConnectionPool(connectionPool);
         return new ScraperLogProxy(scraperSetting.getScraper());
     }
 

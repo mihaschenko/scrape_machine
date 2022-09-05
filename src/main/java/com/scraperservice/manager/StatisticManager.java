@@ -2,17 +2,15 @@ package com.scraperservice.manager;
 
 import com.scraperservice.scraper.page.PageType;
 import com.scraperservice.storage.DataArray;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Component
 public class StatisticManager {
-    private static final StatisticManager statisticManager = new StatisticManager();
-
-    public static StatisticManager getInstance() { return statisticManager; }
-
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm dd.MM.yyyy");
 
     private final AtomicInteger linkAmountCounter;

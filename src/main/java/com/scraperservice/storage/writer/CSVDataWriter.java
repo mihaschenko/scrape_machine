@@ -84,8 +84,11 @@ public class CSVDataWriter implements ScraperDataWriter {
     }
 
     private void mergeAllTempFiles() throws Exception {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH_mm_dd_MM_yyyy");
-        File finalFile = new File("results/" + FILE_SUFFIX + "_" + dateFormat.format(new Date()) + ".csv");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH_mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy");
+        Date date = new Date();
+        File finalFile = new File("results/" +
+                dateFormat.format(date) + "_" + FILE_SUFFIX + "_" + timeFormat.format(date) + ".csv");
         this.finalFile = finalFile;
         boolean isHeadExist = false;
         try(CSVWriter csvWriter = CSVWriterBuilder.getInstance(

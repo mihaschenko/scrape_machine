@@ -1,6 +1,5 @@
 package com.scraperservice.manager;
 
-import com.scraperservice.context.ScraperContext;
 import com.scraperservice.UniqueValuesStorage;
 import com.scraperservice.exception.UndefinedPageException;
 import com.scraperservice.scraper.page.PageType;
@@ -15,7 +14,6 @@ import com.scraperservice.storage.DataArray;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -28,16 +26,6 @@ import java.util.stream.Collectors;
 @Component
 @Data
 public class ScrapeManager implements Runnable {
-    private static ScrapeManager scrapeManager = null;
-
-    public synchronized static ScrapeManager getInstance() {
-        if(scrapeManager == null) {
-            AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ScraperContext.class);
-            scrapeManager = context.getBean(ScrapeManager.class);
-        }
-        return scrapeManager;
-    }
-
     @Autowired
     private final DataSaveManager dataSaveManager;
     @Autowired
@@ -142,10 +130,7 @@ public class ScrapeManager implements Runnable {
         }
 
         taskPool.shutdown();
-        uniqueValuesStorage.close();
         connectionPool.close();
-        dataSaveManager.close();
-        statisticFrameManager.close();
         LogHelper.getLogger().log(Level.INFO, StatisticManager.getInstance().toString());
     }
 

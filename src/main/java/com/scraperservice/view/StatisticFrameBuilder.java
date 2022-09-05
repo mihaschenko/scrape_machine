@@ -5,12 +5,12 @@ import com.scraperservice.view.StatisticTextArea;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.io.Closeable;
 
 @Component
-@Scope("singleton")
 public class StatisticFrameBuilder implements Closeable {
     private final Timer timer;
     private final JFrame jFrame;
@@ -27,6 +27,7 @@ public class StatisticFrameBuilder implements Closeable {
     }
 
     @Override
+    @PreDestroy
     public void close() {
         timer.stop();
         jFrame.dispose();
