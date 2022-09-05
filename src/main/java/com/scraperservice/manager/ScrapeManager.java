@@ -41,6 +41,8 @@ public class ScrapeManager implements Runnable {
     @Autowired
     @Qualifier("blockingQueue")
     private final BlockingQueue<Runnable> runnableBlockingQueue;
+    @Autowired
+    private final StatisticManager statisticManager;
     private final AtomicInteger workStatus = new AtomicInteger(0);
     private static final int NOTHING_WORKS = 0;
 
@@ -70,6 +72,7 @@ public class ScrapeManager implements Runnable {
                 workStatus.incrementAndGet();
                 taskPool.execute(() -> {
                     PageData pageData = new PageData(link);
+                    boolean isPageSuccess = false;
                     try {
                         Connection connection = connectionPool.acquire();
                         try{
@@ -105,6 +108,8 @@ public class ScrapeManager implements Runnable {
                             }
                             if(!isPageHasLinks && pageData.getPageType() != PageType.CATEGORY_AND_PRODUCT_PAGE)
                                 throw new DoNotHaveAnyProductLinksException();
+                            else
+                                isPageSuccess = true;
 
                             String nextPage = scraper.goToNextPage(pageData);
                             if (nextPage != null && !nextPage.isEmpty()) {
@@ -116,14 +121,22 @@ public class ScrapeManager implements Runnable {
                         if(pageData.getPageType().isProduct()) {
                             Collection<DataArray> result = scraper.scrapeData(pageData);
                             pageData.setProducts(result.size());
+                            statisticManager.writeDataArrayIntoStatisticDown(result);
                             dataSaveManager.save(result
                                     .stream().filter(DataArray::checkAllNecessaryCells).collect(Collectors.toList()));
+                            if(result.size() > 0)
+                                isPageSuccess = true;
                         }
                         logCompleteStatus(pageData);
                     }
                     catch (Exception e) {
                         logException(pageData, e);
                     }
+                    if(isPageSuccess)
+                        statisticManager.addTotalSuccessUniqueLinks(1);
+                    else
+                        statisticManager.addTotalFailUniqueLinks(1);
+
                     workStatus.decrementAndGet();
                 });
             }
@@ -131,7 +144,7 @@ public class ScrapeManager implements Runnable {
 
         taskPool.shutdown();
         connectionPool.close();
-        LogHelper.getLogger().log(Level.INFO, StatisticManager.getInstance().toString());
+        LogHelper.getLogger().log(Level.INFO, statisticManager.toString());
     }
 
     private void logException(PageData result, Throwable exception) {

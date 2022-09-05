@@ -1,6 +1,5 @@
 package com.scraperservice;
 
-import com.scraperservice.connection.ConnectionPool;
 import com.scraperservice.connection.setting.ConnectionProperties;
 import com.scraperservice.manager.StatisticManager;
 import com.scraperservice.scraper.Scraper;
@@ -10,20 +9,18 @@ import com.scraperservice.storage.DataArray;
 
 import java.util.*;
 
-public class ScraperLogProxy extends Scraper {
+public class ScraperProxy extends Scraper {
     private final Scraper scraper;
     private final StatisticManager statisticManager;
 
-    public ScraperLogProxy(Scraper scraper) {
+    public ScraperProxy(Scraper scraper, StatisticManager statisticManager) {
         this.scraper = scraper;
-        statisticManager = StatisticManager.getInstance();
+        this.statisticManager = statisticManager;
     }
 
     @Override
     public Collection<DataArray> scrapeData(PageData pageData) {
-        Collection<DataArray> result = scraper.scrapeData(pageData);
-        statisticManager.recordProductDataStatistic(result);
-        return result;
+        return scraper.scrapeData(pageData);
     }
 
     @Override
@@ -35,37 +32,27 @@ public class ScraperLogProxy extends Scraper {
 
     @Override
     public Collection<String> getStartLinks() {
-        Collection<String> result = scraper.getStartLinks();
-        statisticManager.addLinkAmountCounter((result != null ? result.size() : 0));
-        return result;
+        return scraper.getStartLinks();
     }
 
     @Override
     public Collection<String> scrapeCategories(PageData pageData) {
-        Collection<String> result = scraper.scrapeCategories(pageData);
-        statisticManager.addLinkAmountCounter(result != null ? result.size() : 0);
-        return result;
+        return scraper.scrapeCategories(pageData);
     }
 
     @Override
     public Collection<String> scrapeSubCategories(PageData pageData) {
-        Collection<String> result = scraper.scrapeSubCategories(pageData);
-        statisticManager.addLinkAmountCounter(result != null ? result.size() : 0);
-        return result;
+        return scraper.scrapeSubCategories(pageData);
     }
 
     @Override
     public Collection<String> scrapeLinksToProductPages(PageData pageData) {
-        Collection<String> result = scraper.scrapeLinksToProductPages(pageData);
-        statisticManager.addLinkAmountCounter(result != null ? result.size() : 0);
-        return result;
+        return scraper.scrapeLinksToProductPages(pageData);
     }
 
     @Override
     public String goToNextPage(PageData pageData) {
-        String result = scraper.goToNextPage(pageData);
-        statisticManager.addLinkAmountCounter(result != null && !result.isEmpty() ? 1 : 0);
-        return result;
+        return scraper.goToNextPage(pageData);
     }
 
     @Override

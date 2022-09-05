@@ -1,6 +1,5 @@
 package com.scraperservice;
 
-import com.scraperservice.context.ScraperContext;
 import com.scraperservice.manager.ScrapeManager;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

@@ -1,23 +1,19 @@
-package com.scraperservice.context;
+package com.scraperservice;
 
-import com.scraperservice.ScraperLogProxy;
-import com.scraperservice.ScraperSetting;
-import com.scraperservice.UniqueValuesStorage;
 import com.scraperservice.connection.Connection;
 import com.scraperservice.connection.JsoupConnection;
 import com.scraperservice.connection.SeleniumConnection;
 import com.scraperservice.connection.ConnectionPool;
 import com.scraperservice.manager.DataSaveManager;
+import com.scraperservice.manager.StatisticManager;
 import com.scraperservice.scraper.Scraper;
 import com.scraperservice.storage.writer.CSVDataWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.concurrent.*;
 
 @Configuration
@@ -32,9 +28,9 @@ public class ScraperContext {
     }
 
     @Bean
-    public Scraper scraper(ScraperSetting scraperSetting, ConnectionPool connectionPool) {
+    public Scraper scraper(ScraperSetting scraperSetting, ConnectionPool connectionPool, StatisticManager statisticManager) {
         scraperSetting.getScraper().setConnectionPool(connectionPool);
-        return new ScraperLogProxy(scraperSetting.getScraper());
+        return new ScraperProxy(scraperSetting.getScraper(), statisticManager);
     }
 
     @Bean("blockingQueue")
@@ -62,15 +58,6 @@ public class ScraperContext {
         else
             throw new RuntimeException();
         return new ConnectionPool(connectionPoolSize, scraperSetting.getConnectionClass());
-    }
-
-    @Bean
-    @Primary
-    public UniqueValuesStorage uniqueValuesStorage(ScraperSetting scraperSetting) throws SQLException {
-        UniqueValuesStorage uniqueValuesStorage = new UniqueValuesStorage();
-        if(scraperSetting.getStartLinks() != null)
-            uniqueValuesStorage.addAll(scraperSetting.getStartLinks());
-        return uniqueValuesStorage;
     }
 
     @Bean

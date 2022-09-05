@@ -1,19 +1,34 @@
 package com.scraperservice;
 
 import com.scraperservice.helper.LogHelper;
+import com.scraperservice.manager.StatisticManager;
 import com.scraperservice.utils.RandomStringHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Level;
 
+@Component
 public class UniqueValuesStorage implements AutoCloseable {
     private final String tableIndex;
     private final Connection connection;
     private final Statement statement;
     private volatile int index = 1;
+    @Autowired
+    private ScraperSetting scraperSetting;
+    @Autowired
+    private StatisticManager statisticManager;
+
+    @PostConstruct
+    private void init() {
+        if(scraperSetting.getStartLinks() != null)
+            addAll(scraperSetting.getStartLinks());
+    }
 
     public UniqueValuesStorage() throws SQLException {
         connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/uniqueLinkValues.s3db");
@@ -60,7 +75,14 @@ public class UniqueValuesStorage implements AutoCloseable {
         try{
             String sql = String.format("INSERT INTO UV_%s (id, link, is_taken) VALUES (%d, '%s', false)", tableIndex, index, str);
             index++;
-            return statement.executeUpdate(sql) != 0;
+            boolean result = statement.executeUpdate(sql) != 0;
+
+            if(result)
+                statisticManager.addTotalUniqueLinks(1);
+            else
+                statisticManager.addDuplicateLinksCounter(1);
+
+            return result;
         }
         catch (SQLException e) {
             LogHelper.getLogger().log(Level.WARNING, e.getMessage(), e);
