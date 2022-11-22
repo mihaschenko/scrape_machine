@@ -6,6 +6,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegexUtil {
+    public static String replaceAll(String regex, String text, int group) {
+        final String subst = "$" + group;
+
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
+        final Matcher matcher = pattern.matcher(text);
+        return matcher.replaceAll(subst);
+    }
+
     public static String findText(String regex, String text) {
         Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.DOTALL);
         Matcher matcher = pattern.matcher(text);

@@ -1,6 +1,5 @@
 package com.scraperservice.connection.setting;
 
-import com.scraperservice.captcha.CaptchaServer;
 import com.scraperservice.captcha.CaptchaSolver;
 import lombok.*;
 
@@ -21,7 +20,6 @@ public class ConnectionProperties {
     private List<ConnectionEvent> events;
     private int delay;
     private RandomDelay randomDelay;
-    private CaptchaServer captchaServer;
     private CaptchaSolver captchaSolver;
 
     public ConnectionProperties() {
@@ -32,7 +30,6 @@ public class ConnectionProperties {
         events = new ArrayList<>();
         delay = 0;
         randomDelay = null;
-        captchaServer = null;
         captchaSolver = null;
     }
 
@@ -46,7 +43,6 @@ public class ConnectionProperties {
         events = connectionProperties.events;
         delay = connectionProperties.delay;
         randomDelay = connectionProperties.randomDelay;
-        captchaServer = connectionProperties.captchaServer;
         captchaSolver = connectionProperties.captchaSolver;
     }
 

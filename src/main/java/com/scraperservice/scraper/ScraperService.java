@@ -7,7 +7,7 @@ import com.scraperservice.storage.DataCell;
 import com.scraperservice.utils.RegexUtil;
 import com.scraperservice.utils.ScrapeUtil;
 import com.scraperservice.utils.TableUtil;
-import com.web.entity.Config;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.nodes.Document;
@@ -24,27 +24,15 @@ import java.util.stream.Collectors;
  * @see com.scraperservice.scraper.Scraper
  */
 public class ScraperService extends Scraper {
-    private final String baseSiteUrl;
+    private String baseSiteUrl;
     private final List<String> startPages = new ArrayList<>();
-    private final String categorySelector;
-    private final String subcategorySelector;
-    private final String productSelector;
-    private final String nextPageSelector;
-    private final String nextPageGET;
+    private String categorySelector;
+    private String subcategorySelector;
+    private String productSelector;
+    private String nextPageSelector;
+    private String nextPageGET;
     private String isProductSelector;
     private final List<ProductDataInfo> productDataInfoList = new ArrayList<>();
-
-    public ScraperService(Config config) {
-        baseSiteUrl = config.getBaseUrl();
-        //startPages.addAll();
-        categorySelector = config.getCategorySelector();
-        subcategorySelector = config.getSubcategorySelector();
-        productSelector = config.getProductSelector();
-        nextPageSelector = config.getNextPageSelector();
-        nextPageGET = config.getNextPageGet();
-        //isProductSelector =
-        scrapeProductDataInfo(new JSONArray(config.getProductDataSelectors()));
-    }
 
     private void scrapeProductDataInfo(JSONArray json) {
         for(int i = 1;;i++) {

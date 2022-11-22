@@ -42,6 +42,13 @@ public class HTMLUtil {
         return this;
     }
 
+    public HTMLUtil removeAllTags() {
+        final Pattern pattern = Pattern.compile("<(/|)[^>]+>", Pattern.MULTILINE | Pattern.DOTALL);
+        final Matcher matcher = pattern.matcher(html);
+        html = matcher.replaceAll("");
+        return this;
+    }
+
     public HTMLUtil removeLinks() {
         removeTagAndContent("a");
         removeTag("img");

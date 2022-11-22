@@ -1,9 +1,11 @@
 package com.scraperservice.connection.setting;
 
+import com.scraperservice.utils.ClickOnElementUtil;
 import com.scraperservice.utils.WebDriverUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 
 public class MoveUntilEndPageClickEvent implements ConnectionEvent {
     public final String cssSelector;
@@ -16,13 +18,11 @@ public class MoveUntilEndPageClickEvent implements ConnectionEvent {
 
     @Override
     public void event(WebDriver webDriver, String url) {
-        try{
-            Document document = Jsoup.parse(webDriver.getPageSource());
-            if(document.selectFirst(cssSelector) != null)
-                WebDriverUtil.moveDownUntilEndOfPageClick(webDriver, cssSelector, isUseJavascript);
+        Document document = Jsoup.parse(webDriver.getPageSource());
+        if(document.selectFirst(cssSelector) != null) {
+            ClickOnElementUtil.prepare((ChromeDriver) webDriver, cssSelector)
+                    .setClickOnEverything(true).setUseJavascript(isUseJavascript).click();
         }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        WebDriverUtil.moveDownToEndOfPage(webDriver);
     }
 }

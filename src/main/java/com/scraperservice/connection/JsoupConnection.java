@@ -1,7 +1,5 @@
 package com.scraperservice.connection;
 
-import com.scraperservice.captcha.CaptchaResult;
-import com.scraperservice.captcha.CaptchaStatus;
 import com.scraperservice.connection.setting.ConnectionProperties;
 import com.scraperservice.helper.SSLHelper;
 import com.scraperservice.scraper.page.PageData;
@@ -9,7 +7,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 
-public class JsoupConnection extends Connection {
+public class JsoupConnection extends Connection<Document> {
     @Override
     public Document getPage(String url, ConnectionProperties setting) throws IOException {
         PageData pageData = new PageData();
@@ -28,26 +26,15 @@ public class JsoupConnection extends Connection {
         Document result = connectionProperties.getMethod() == ConnectionProperties.Method.GET ?
                 connection.get() : connection.post();
 
-        for(int i = 0; i < 3; i++) {
-            if(connectionProperties.getCaptchaServer() != null) {
-                CaptchaResult captchaResult = connectionProperties.getCaptchaServer().solve(null, result, response.cookies());
-                if(connectionProperties.getCaptchaSolver() != null) {
-                    if(captchaResult.key != null) {
-                        result = connectionProperties.getCaptchaSolver().solve(null, pageData.getUrl(), captchaResult, response.cookies());
-                        if(!connectionProperties.getCaptchaServer().isPageHaveCaptcha(result))
-                            break;
-                    }
-                }
-                else
-                    break;
-            }
-            else
-                break;
-        }
-
         delay(connectionProperties);
         pageData.setHtml(result);
     }
+
+    @Override
+    public void before(Document document, PageData pageData, ConnectionProperties connectionProperties) {}
+
+    @Override
+    public void after(Document document, PageData pageData, ConnectionProperties connectionProperties) {}
 
     private org.jsoup.Connection createConnection(PageData pageData, ConnectionProperties connectionProperties) {
         org.jsoup.Connection connection = SSLHelper.getConnection(pageData.getUrl());

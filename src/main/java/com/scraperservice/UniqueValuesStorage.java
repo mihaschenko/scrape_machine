@@ -85,7 +85,7 @@ public class UniqueValuesStorage implements AutoCloseable {
             return result;
         }
         catch (SQLException e) {
-            LogHelper.getLogger().log(Level.WARNING, e.getMessage(), e);
+            //LogHelper.getLogger().log(Level.WARNING, e.getMessage(), e);
             return false;
         }
     }

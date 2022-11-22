@@ -51,6 +51,7 @@ public class ScraperSetting {
 
         List<Class<? extends Scraper>> allClasses =
                 new ArrayList<>(reflections.getSubTypesOf(Scraper.class));
+        allClasses.sort(Comparator.comparing(Class::getSimpleName));
         if(allClasses.size() > 0) {
             System.out.println("I. CHOOSE A SCRAPER");
             Class<? extends Scraper> clazz = getUserChoice(allClasses);
@@ -104,32 +105,14 @@ public class ScraperSetting {
         System.out.println("""
                 Initial links options. There are the following options:
                 \t* Hit "Enter" to use default links from config or class file
-                \t* Provide links separated by comma
+                \t* Provide links separated by semicolon
                 \t* Type 'file::<pathToFile>' - file with list of links""");
         result = ConsoleHelper.readLine().trim();
         if(result.startsWith("file::"))
             startLinks = Files.readAllLines(Paths.get(result.replaceFirst("file::", "")));
         else if(!result.isEmpty())
-            startLinks = Arrays.stream(result.trim().split(",")).toList();
+            startLinks = Arrays.stream(result.trim().split(";")).toList();
         else
             startLinks = Collections.emptyList();
     }
-
-    /*private void setUseProxy() throws IOException {
-        String result;
-        System.out.println("IV. CHOOSE WHETHER TO USE A PROXY OR NOT (Y/N)");
-        while (true) {
-            result = ConsoleHelper.readLine().trim();
-            if(result.equals("Y")) {
-                isUseProxy = true;
-                break;
-            }
-            else if(result.equals("N")) {
-                isUseProxy = false;
-                break;
-            }
-            else
-                System.out.println("Incorrect answer. Try again!");
-        }
-    }*/
 }

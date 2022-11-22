@@ -19,6 +19,17 @@ import java.util.stream.Collectors;
  * @author Mihaschenko V.
  */
 public class ScrapeUtil {
+    public static String iterateUrlGetParameter(String url, String parameterName, int addToIndex) {
+        final String regex = "(?<=" + parameterName + "=)[0-9]+";
+        String indexStr = RegexUtil.findText(regex, url);
+        if(!indexStr.isBlank()) {
+            int index = Integer.parseInt(indexStr);
+            index += addToIndex;
+            return url.replaceFirst(regex, Integer.toString(index));
+        }
+        return url;
+    }
+
     /**
      * @param document Jsoup Document. Содержит HTML
      * @param selector css селектор
