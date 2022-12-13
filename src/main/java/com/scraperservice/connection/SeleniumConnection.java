@@ -1,6 +1,5 @@
 package com.scraperservice.connection;
 
-import com.scraperservice.ChromeDriverFactory;
 import com.scraperservice.connection.setting.ConnectionProperties;
 import com.scraperservice.helper.LogHelper;
 import com.scraperservice.scraper.page.PageData;
@@ -13,11 +12,17 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+@Component
+@Scope("prototype")
 public class SeleniumConnection extends Connection<WebDriver> {
     private final ChromeDriverFactory driverFactory;
     private ChromeDriver driver;
@@ -29,11 +34,17 @@ public class SeleniumConnection extends Connection<WebDriver> {
         return driverFactory;
     }
 
+    @Deprecated
     public SeleniumConnection() {
-        this.driverFactory = ChromeDriverFactory.getInstance();
-        init();
+        this(null);
     }
 
+    @Autowired
+    public SeleniumConnection(ChromeDriverFactory chromeDriverFactory) {
+        this.driverFactory = chromeDriverFactory;
+    }
+
+    @PostConstruct
     private void init() {
         if(driver == null)
             driver = driverFactory.getChromeDriver();

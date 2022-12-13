@@ -12,6 +12,7 @@ import com.scraperservice.scraper.page.PageData;
 import com.scraperservice.scraper.Scraper;
 import com.scraperservice.storage.DataArray;
 import lombok.Data;
+import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -74,17 +75,25 @@ public class ScrapeManager implements Runnable {
                     PageData pageData = new PageData(link);
                     boolean isPageSuccess = false;
                     try {
-                        Connection connection = connectionPool.acquire();
+                        Connection connection = null;
                         try{
+                            connection = connectionPool.acquire();
                             connection.getPage(pageData, scraper.getDefaultConnectionProperties());
-                            pageData.setPageType(scraper.getPageType(pageData));
-
-                            if(pageData.getPageType() == PageType.UNDEFINED)
-                                throw new UndefinedPageException();
+                        }
+                        catch (Exception e) {
+                            LogHelper.getLogger().log(Level.WARNING, "CONNECTION ERROR: " + e.getMessage());
+                            if(pageData.getHtml() == null)
+                                pageData.setHtml(new Document(pageData.getUrl()));
                         }
                         finally {
-                            connectionPool.release(connection);
+                            if(connection != null)
+                                connectionPool.release(connection);
                         }
+
+                        pageData.setPageType(scraper.getPageType(pageData));
+
+                        if(pageData.getPageType() == PageType.UNDEFINED)
+                            throw new UndefinedPageException();
 
                         if(pageData.getPageType().isCategory()) {
                             Collection<String> category = scraper.scrapeCategories(pageData);

@@ -3,15 +3,16 @@ package com.scraperservice;
 import com.scraperservice.helper.LogHelper;
 import com.scraperservice.manager.StatisticManager;
 import com.scraperservice.utils.RandomStringHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class UniqueValuesStorage implements AutoCloseable {
@@ -19,24 +20,50 @@ public class UniqueValuesStorage implements AutoCloseable {
     private final Connection connection;
     private final Statement statement;
     private volatile int index = 1;
-    @Autowired
-    private ScraperSetting scraperSetting;
-    @Autowired
-    private StatisticManager statisticManager;
+    private final StatisticManager statisticManager;
+
+    private static final String NAME_DATA_REGEX = "([0-9]+)_([0-9]+)_([0-9]+)$";
 
     @PostConstruct
-    private void init() {
-        if(scraperSetting.getStartLinks() != null)
-            addAll(scraperSetting.getStartLinks());
+    private void init() throws SQLException {
+        // remove all old tables
+        ResultSet tableNames =
+                statement.executeQuery("SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%';");
+        Date currentData = new Date();
+        List<String> tableDeleteList = new ArrayList<>();
+        final long monthTime = 1000L*60*60*24*31;
+        while (tableNames.next()) {
+            String name = tableNames.getString("name");
+            Pattern pattern = Pattern.compile(NAME_DATA_REGEX);
+            Matcher matcher = pattern.matcher(name);
+            if(matcher.find()) {
+                GregorianCalendar tableData = new GregorianCalendar();
+                tableData.set(Integer.parseInt(matcher.group(3)),
+                        Integer.parseInt(matcher.group(2))-1,
+                        Integer.parseInt(matcher.group(1)));
+                if(currentData.getTime() - tableData.getTime().getTime() >= monthTime)
+                    tableDeleteList.add(name);
+            }
+            else
+                tableDeleteList.add(name);
+        }
+
+        for(String tableName : tableDeleteList)
+            statement.executeUpdate("DROP TABLE IF EXISTS " + tableName);
     }
 
-    public UniqueValuesStorage() throws SQLException {
+    public UniqueValuesStorage(ScraperSetting scraperSetting, StatisticManager statisticManager) throws SQLException {
         connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/uniqueLinkValues.s3db");
 
         tableIndex = "_" + RandomStringHelper.getRandomStringOnlyLetters( 10) + "_"
                 + new SimpleDateFormat("hh_mm_ss_SSS_dd_MM_yyyy").format(new Date());
         statement = connection.createStatement();
+
+        this.statisticManager = statisticManager;
         createTableAndIndex();
+
+        if(scraperSetting.getStartLinks() != null)
+            addAll(scraperSetting.getStartLinks());
     }
 
     private void createTableAndIndex() throws SQLException {

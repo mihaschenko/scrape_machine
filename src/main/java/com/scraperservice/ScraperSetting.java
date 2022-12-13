@@ -6,7 +6,9 @@ import com.scraperservice.helper.ConsoleHelper;
 import com.scraperservice.scraper.Scraper;
 import lombok.Data;
 import org.reflections.Reflections;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
@@ -14,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 @Data
+@Component
 public class ScraperSetting {
     private static final String CONNECTION_CLASSES_PACKAGE = "com.scraperservice.connection";
     private static final String SCRAPER_CLASSES_PACKAGE = "com.scraperservice.scraper";
@@ -38,6 +41,7 @@ public class ScraperSetting {
         this.startLinks = startLinks;
     }
 
+    @PostConstruct
     public void init() throws Exception {
         setScraper();
         setConnection();
